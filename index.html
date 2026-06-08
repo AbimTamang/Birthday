@@ -258,9 +258,24 @@
       transform: scale(1) translateY(0);
     }
 
-    .popup-hero-icon {
-      font-size: clamp(4rem, 14vw, 6rem);
+    .popup-hero-image-wrap {
+      width: clamp(100px, 25vw, 140px);
+      height: clamp(100px, 25vw, 140px);
+      border-radius: 50%;
+      border: 3px solid var(--gold);
+      overflow: hidden;
+      margin: 0 auto;
+      box-shadow: 0 0 30px rgba(0,191,255,0.4), 0 0 15px rgba(245,200,66,0.6);
       animation: popBounce 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.5);
+    }
+    .popup-hero-image-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .popup-hero-icon {
+      font-size: clamp(3rem, 10vw, 4.5rem);
     }
     @keyframes popBounce {
       from { transform: scale(0) rotate(-15deg); }
@@ -675,7 +690,10 @@
 <!-- HERO POP-UP -->
 <div class="hero-popup-overlay" id="heroPopup">
   <div class="hero-popup">
-    <div class="popup-hero-icon" id="popupIcon">🦅</div>
+    <div class="popup-hero-image-wrap" id="popupImageWrap">
+      <img id="popupImage" src="" alt="Hero Photo" onerror="this.style.display='none'; document.getElementById('popupIcon').style.display='block';"/>
+      <div class="popup-hero-icon" id="popupIcon" style="display:none;">🦅</div>
+    </div>
     <div class="popup-hero-name" id="popupName">Pharsa</div>
     <div class="popup-hero-role" id="popupRole">Mage</div>
     <div class="popup-divider"></div>
@@ -795,21 +813,21 @@ const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || 
 
 // ── HERO DATA WITH BIRTHDAY WISHES ──────────────────────────────
 const heroes = [
-  { name: "Layla",     role: "Marksman", icon: "🏹", color: "#ff77aa",
+  { name: "Layla",     role: "Marksman", icon: "🏹", color: "#ff77aa", img: "assets/layla.png",
     wish: "Happy birthday, <strong>Anvex</strong>! 🎯 Like my ultimate, may your dreams have <strong>unlimited range</strong> — reaching farther than anyone ever expected. Aim high, hit hard, and never stop shooting for the stars! 🌟" },
-  { name: "Alucard",  role: "Fighter",  icon: "🧛", color: "#cc44ff",
+  { name: "Alucard",  role: "Fighter",  icon: "🧛", color: "#cc44ff", img: "assets/alucard.png",
     wish: "Yo <strong>Anvex</strong>! 🗡️ Today you turn 18 — time to go <strong>full lifesteal mode</strong>. Take everything life throws at you and turn it into strength. You're built different, bro. <strong>No retreat, only domination!</strong> 💪" },
-  { name: "Gusion",   role: "Assassin", icon: "⚡", color: "#00d4ff",
+  { name: "Gusion",   role: "Assassin", icon: "⚡", color: "#00d4ff", img: "assets/gusion.png",
     wish: "Happy 18th, <strong>Anvex</strong>! ⚡ Like my daggers, may your moves be <strong>swift and precise</strong>. You've got the talent, the speed, and the style — now go <strong>one-combo</strong> every challenge life throws at you! 🔥" },
-  { name: "Kagura",   role: "Mage",     icon: "🌸", color: "#ff99cc",
+  { name: "Kagura",   role: "Mage",     icon: "🌸", color: "#ff99cc", img: "assets/kagura.png",
     wish: "Dear <strong>Anvex</strong>! 🌸 Turning 18 is like opening your umbrella for the first time — a whole new world of <strong>magic awaits</strong>. May your path always bloom with beauty, wisdom, and <strong>unstoppable power</strong>! ✨" },
-  { name: "Chou",     role: "Fighter",  icon: "👊", color: "#ff8800",
+  { name: "Chou",     role: "Fighter",  icon: "👊", color: "#ff8800", img: "assets/chou.png",
     wish: "Yooo <strong>Anvex</strong>! 👊 18 years and you're still <strong>undefeated</strong>! Like my kicks, may you <strong>break through every wall</strong> life puts in front of you. Stay fierce, stay free, stay legendary! 🥊🔥" },
-  { name: "Ling",     role: "Assassin", icon: "🌀", color: "#66eeff",
+  { name: "Ling",     role: "Assassin", icon: "🌀", color: "#66eeff", img: "assets/ling.png",
     wish: "Happy birthday, <strong>Anvex</strong>! 🌀 At 18, you're ready to <strong>fly above it all</strong> — like me on the walls, untouchable. May you always find the <strong>highest ground</strong> and strike when the moment is right! 🗡️" },
-  { name: "Pharsa",   role: "Mage",     icon: "🦅", color: "#aa66ff",
+  { name: "Pharsa",   role: "Mage",     icon: "🦅", color: "#aa66ff", img: "assets/pharsa.png",
     wish: "Soar high, <strong>Anvex</strong>! 🦅 Turning 18 means you can finally <strong>see the whole map</strong> of life. Like my wings, may your vision be <strong>limitless</strong> and your strikes <strong>devastating</strong>. The sky is yours! 💜" },
-  { name: "Lancelot", role: "Assassin", icon: "⚔️", color: "#f5c842",
+  { name: "Lancelot", role: "Assassin", icon: "⚔️", color: "#f5c842", img: "assets/lancelot.png",
     wish: "Happy 18th, <strong>Anvex</strong>! ⚔️ A true swordsman knows his moment — and <strong>this is yours</strong>. Dash through every obstacle with grace, pierce every doubt, and emerge as the <strong>Legendary hero</strong> you were born to be! 👑" },
 ];
 
@@ -895,11 +913,17 @@ function goTo(n) {
 // ── HERO POPUP ───────────────────────────────────────────────────
 const popupOverlay = document.getElementById('heroPopup');
 const popupIcon = document.getElementById('popupIcon');
+const popupImage = document.getElementById('popupImage');
 const popupName = document.getElementById('popupName');
 const popupRole = document.getElementById('popupRole');
 const popupWish = document.getElementById('popupWish');
 
 function showHeroPopup(hero) {
+  // Reset image display
+  popupImage.style.display = 'block';
+  popupIcon.style.display = 'none';
+  popupImage.src = hero.img;
+  
   popupIcon.textContent = hero.icon;
   popupName.textContent = hero.name;
   popupRole.textContent = hero.role;
