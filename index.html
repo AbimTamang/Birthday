@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Happy 18th Birthday – MLBB Edition 🎮</title>
-  <meta name="description" content="An epic Mobile Legends Bang Bang themed 18th birthday wish for a legendary brother!" />
+  <meta name="description" content="An epic Mobile Legends Bang Bang themed 18th birthday wish for Anvex Tamang!" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -16,56 +16,59 @@
       --gold-light: #ffe97a;
       --gold-dark: #c9951a;
       --blue: #00bfff;
-      --blue-dark: #0066cc;
       --blue-glow: #00d4ff;
       --crimson: #e63946;
       --bg-dark: #04060f;
-      --bg-mid: #080d1e;
-      --purple: #7b2fff;
     }
 
-    html, body {
-      width: 100%; height: 100%;
+    html { height: 100%; }
+    body {
+      min-height: 100%;
       overflow: hidden;
       background: var(--bg-dark);
       font-family: 'Rajdhani', sans-serif;
       color: #fff;
       cursor: default;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* ─── CANVAS PARTICLES ─── */
+    /* ─── GPU HINTS ─── */
+    .screen, #bgWrap, #lightning, .hero-card, .blessing-card,
+    .confetti-piece, .emblem-wrap img, .hero-popup-overlay {
+      will-change: transform, opacity;
+    }
+
+    /* ─── CANVAS ─── */
     #particleCanvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
+      position: fixed; inset: 0; z-index: 0;
       pointer-events: none;
     }
 
-    /* ─── BG IMAGE ─── */
+    /* ─── BG ─── */
     #bgWrap {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
+      position: fixed; inset: -8px; z-index: 0;
       background: url('assets/mlbb_bg.png') center/cover no-repeat;
-      filter: brightness(0.32) saturate(1.6);
-      transition: filter 1s ease;
+      filter: brightness(0.35) saturate(1.5);
+      transition: filter 0.8s ease;
     }
-    #bgWrap.lit { filter: brightness(0.55) saturate(1.8); }
+    #bgWrap.lit { filter: brightness(0.5) saturate(1.7); }
 
-    /* ─── VIGNETTE ─── */
     #vignette {
       position: fixed; inset: 0; z-index: 1;
-      background: radial-gradient(ellipse at center, transparent 40%, rgba(4,6,15,0.85) 100%);
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(4,6,15,0.88) 100%);
       pointer-events: none;
     }
 
-    /* ─── LIGHTNING OVERLAY ─── */
     #lightning {
       position: fixed; inset: 0; z-index: 2;
-      pointer-events: none;
-      opacity: 0;
-      background: radial-gradient(ellipse at 50% 30%, rgba(0,191,255,0.18) 0%, transparent 70%);
-      transition: opacity 0.1s;
+      pointer-events: none; opacity: 0;
+      background: radial-gradient(ellipse at 50% 30%, rgba(0,191,255,0.2) 0%, transparent 70%);
+      transition: opacity 0.08s;
+    }
+
+    .scanlines {
+      position: fixed; inset: 0; z-index: 3; pointer-events: none;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px);
     }
 
     /* ─── SCREENS ─── */
@@ -74,454 +77,496 @@
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       opacity: 0; pointer-events: none;
-      transition: opacity 0.8s ease;
+      transition: opacity 0.6s ease;
     }
     .screen.active { opacity: 1; pointer-events: all; }
 
     /* ══════════════════════════════
-       SCREEN 0 – INTRO / PRESS START
+       SCREEN 0 – INTRO
     ══════════════════════════════ */
-    #screen0 { gap: 32px; }
+    #screen0 { gap: clamp(16px, 4vh, 32px); padding: 20px; }
 
     .emblem-wrap {
       position: relative;
-      width: 180px; height: 180px;
+      width: clamp(120px, 30vw, 180px); height: clamp(120px, 30vw, 180px);
       display: flex; align-items: center; justify-content: center;
     }
     .emblem-wrap img {
-      width: 170px; height: 170px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 30px rgba(0,191,255,0.7)) drop-shadow(0 0 60px rgba(245,200,66,0.4));
-      animation: emblemFloat 3s ease-in-out infinite, emblemGlow 2.5s ease-in-out infinite alternate;
+      width: 90%; height: 90%; object-fit: contain;
+      filter: drop-shadow(0 0 20px rgba(0,191,255,0.7));
+      animation: emblemFloat 3s ease-in-out infinite;
     }
     @keyframes emblemFloat {
       0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-16px); }
-    }
-    @keyframes emblemGlow {
-      from { filter: drop-shadow(0 0 20px rgba(0,191,255,0.6)) drop-shadow(0 0 40px rgba(245,200,66,0.3)); }
-      to   { filter: drop-shadow(0 0 50px rgba(0,191,255,1))   drop-shadow(0 0 80px rgba(245,200,66,0.7)); }
+      50% { transform: translateY(-12px); }
     }
 
     .ring {
-      position: absolute; inset: -10px;
-      border-radius: 50%;
-      border: 2px solid rgba(245,200,66,0.5);
-      animation: ringPulse 2s linear infinite;
+      position: absolute; border-radius: 50%;
+      border: 2px solid rgba(245,200,66,0.4);
+      animation: ringPulse 2.5s linear infinite;
     }
-    .ring:nth-child(2) { inset: -24px; animation-delay: 0.5s; border-color: rgba(0,191,255,0.4); }
-    .ring:nth-child(3) { inset: -40px; animation-delay: 1s;   border-color: rgba(245,200,66,0.25); }
+    .ring:nth-child(1) { inset: -8px; }
+    .ring:nth-child(2) { inset: -20px; animation-delay: 0.6s; border-color: rgba(0,191,255,0.35); }
+    .ring:nth-child(3) { inset: -34px; animation-delay: 1.2s; border-color: rgba(245,200,66,0.2); }
     @keyframes ringPulse {
-      0%   { transform: scale(1);    opacity: 0.8; }
-      100% { transform: scale(1.12); opacity: 0; }
+      0%   { transform: scale(1); opacity: 0.7; }
+      100% { transform: scale(1.1); opacity: 0; }
     }
 
     .game-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1rem, 4vw, 1.5rem);
-      letter-spacing: 6px;
-      color: var(--gold);
-      text-shadow: 0 0 20px rgba(245,200,66,0.8), 0 2px 4px rgba(0,0,0,0.9);
-      text-align: center;
-      text-transform: uppercase;
-    }
-
-    .name-display {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.6rem, 5vw, 3rem);
-      font-weight: 900;
-      letter-spacing: 4px;
-      text-align: center;
-      color: #fff;
-      text-shadow: 0 0 30px rgba(0,212,255,0.9), 0 0 60px rgba(0,212,255,0.5), 0 2px 8px rgba(0,0,0,1);
-      animation: namePulse 3s ease-in-out infinite alternate;
-    }
-    @keyframes namePulse {
-      from { text-shadow: 0 0 20px rgba(0,212,255,0.7), 0 2px 8px rgba(0,0,0,1); letter-spacing: 4px; }
-      to   { text-shadow: 0 0 50px rgba(0,212,255,1), 0 0 80px rgba(245,200,66,0.5), 0 2px 8px rgba(0,0,0,1); letter-spacing: 6px; }
+      font-size: clamp(0.7rem, 3vw, 1.3rem);
+      letter-spacing: 4px; color: var(--gold);
+      text-shadow: 0 0 16px rgba(245,200,66,0.7), 0 2px 4px rgba(0,0,0,0.9);
+      text-align: center; text-transform: uppercase;
     }
 
     .hero-text {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(2rem, 8vw, 5rem);
-      font-weight: 900;
-      line-height: 1.1;
-      text-align: center;
-      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 40%, var(--blue-glow) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: none;
-      filter: drop-shadow(0 0 30px rgba(245,200,66,0.5));
-      animation: heroShimmer 4s ease-in-out infinite alternate;
+      font-size: clamp(2rem, 9vw, 5rem);
+      font-weight: 900; line-height: 1.1; text-align: center;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold) 45%, var(--blue-glow));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: drop-shadow(0 0 24px rgba(245,200,66,0.5));
     }
-    @keyframes heroShimmer {
-      from { filter: drop-shadow(0 0 20px rgba(245,200,66,0.4)); }
-      to   { filter: drop-shadow(0 0 50px rgba(0,191,255,0.7)); }
+
+    .name-display {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.2rem, 4.5vw, 2.8rem);
+      font-weight: 900; letter-spacing: 3px; text-align: center; color: #fff;
+      text-shadow: 0 0 24px rgba(0,212,255,0.9), 0 2px 6px rgba(0,0,0,1);
+      animation: namePulse 3s ease-in-out infinite alternate;
+    }
+    @keyframes namePulse {
+      from { text-shadow: 0 0 16px rgba(0,212,255,0.6), 0 2px 6px rgba(0,0,0,1); }
+      to   { text-shadow: 0 0 40px rgba(0,212,255,1), 0 0 60px rgba(245,200,66,0.4), 0 2px 6px rgba(0,0,0,1); }
     }
 
     .press-start {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(1rem, 3vw, 1.4rem);
-      font-weight: 700;
-      letter-spacing: 4px;
-      color: var(--blue-glow);
-      text-transform: uppercase;
-      text-shadow: 0 0 16px var(--blue-glow);
+      font-size: clamp(0.9rem, 3vw, 1.3rem);
+      font-weight: 700; letter-spacing: 3px; color: var(--blue-glow);
+      text-transform: uppercase; text-shadow: 0 0 12px var(--blue-glow);
       animation: blink 1.3s ease-in-out infinite;
       cursor: pointer;
       border: 2px solid rgba(0,212,255,0.4);
-      padding: 14px 48px;
-      border-radius: 4px;
-      background: rgba(0,191,255,0.07);
-      transition: background 0.3s, border-color 0.3s, transform 0.2s;
+      padding: 12px 36px; border-radius: 4px;
+      background: rgba(0,191,255,0.08);
+      transition: background 0.3s, transform 0.2s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .press-start:hover {
-      background: rgba(0,191,255,0.15);
-      border-color: var(--blue-glow);
-      transform: scale(1.04);
+    .press-start:hover, .press-start:active {
+      background: rgba(0,191,255,0.18); transform: scale(1.04);
     }
-    @keyframes blink {
-      0%,100% { opacity: 1; } 50% { opacity: 0.3; }
-    }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
     /* ══════════════════════════════
-       SCREEN 1 – HERO SELECT / REVEAL
+       SCREEN 1 – HERO SELECT
     ══════════════════════════════ */
-    #screen1 {
-      flex-direction: column; gap: 24px;
-      padding: 24px;
-    }
+    #screen1 { gap: clamp(14px, 3vh, 24px); padding: 16px; }
 
     .section-label {
       font-family: 'Cinzel', serif;
-      font-size: clamp(0.7rem, 2vw, 1rem);
-      letter-spacing: 8px;
-      color: var(--gold);
-      opacity: 1;
+      font-size: clamp(0.6rem, 2vw, 0.95rem);
+      letter-spacing: 5px; color: var(--gold);
       text-transform: uppercase;
-      text-shadow: 0 0 12px rgba(245,200,66,0.7), 0 2px 4px rgba(0,0,0,0.9);
+      text-shadow: 0 0 10px rgba(245,200,66,0.6), 0 2px 3px rgba(0,0,0,0.9);
+      text-align: center;
     }
 
     .hero-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      max-width: 700px;
-      width: 100%;
+      gap: clamp(8px, 2vw, 14px);
+      max-width: 600px; width: 100%;
     }
 
     .hero-card {
       position: relative;
-      background: linear-gradient(160deg, rgba(0,100,200,0.15), rgba(4,6,15,0.6));
+      background: linear-gradient(160deg, rgba(0,80,160,0.15), rgba(4,6,15,0.65));
       border: 1px solid rgba(245,200,66,0.2);
       border-radius: 8px;
-      padding: 16px 8px;
+      padding: clamp(10px, 2vw, 16px) 6px;
       display: flex; flex-direction: column;
-      align-items: center; gap: 8px;
+      align-items: center; gap: 6px;
       cursor: pointer;
-      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-      overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .hero-card::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, transparent 60%, rgba(245,200,66,0.05));
-      opacity: 0; transition: opacity 0.3s;
+    .hero-card:active { transform: scale(0.96); }
+    .hero-card.selected {
+      border-color: var(--blue-glow);
+      box-shadow: 0 0 28px rgba(0,212,255,0.45);
+      transform: translateY(-4px) scale(1.03);
     }
-    .hero-card:hover { transform: translateY(-6px) scale(1.04); border-color: var(--gold); box-shadow: 0 0 30px rgba(245,200,66,0.3); }
-    .hero-card:hover::before { opacity: 1; }
-    .hero-card.selected { border-color: var(--blue-glow); box-shadow: 0 0 40px rgba(0,212,255,0.5); transform: translateY(-8px) scale(1.06); }
 
-    .hero-icon {
-      font-size: 2.4rem;
-      filter: drop-shadow(0 0 10px rgba(0,191,255,0.5));
-    }
+    .hero-icon { font-size: clamp(1.6rem, 5vw, 2.4rem); }
     .hero-name {
       font-family: 'Cinzel', serif;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: #fff;
-      text-align: center;
+      font-size: clamp(0.55rem, 1.8vw, 0.75rem);
+      font-weight: 700; color: #fff; text-align: center;
       text-transform: uppercase;
-      text-shadow: 0 0 8px rgba(245,200,66,0.8), 0 1px 3px rgba(0,0,0,0.9);
+      text-shadow: 0 0 6px rgba(245,200,66,0.7), 0 1px 2px rgba(0,0,0,0.9);
     }
     .hero-role {
-      font-size: 0.65rem;
-      letter-spacing: 2px;
-      color: #00d4ff;
-      text-transform: uppercase;
-      text-shadow: 0 0 6px rgba(0,212,255,0.8), 0 1px 3px rgba(0,0,0,0.9);
-    }
-    .hero-glow {
-      position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
-      width: 60px; height: 20px;
-      background: radial-gradient(ellipse, rgba(0,191,255,0.4), transparent);
-      border-radius: 50%;
+      font-size: clamp(0.45rem, 1.4vw, 0.6rem);
+      letter-spacing: 1.5px; color: #00d4ff; text-transform: uppercase;
+      text-shadow: 0 0 5px rgba(0,212,255,0.7), 0 1px 2px rgba(0,0,0,0.9);
     }
 
     .select-btn {
       font-family: 'Cinzel', serif;
-      font-size: clamp(0.8rem, 2.5vw, 1rem);
-      font-weight: 700;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      padding: 14px 48px;
-      border: none; border-radius: 4px;
+      font-size: clamp(0.75rem, 2.5vw, 1rem);
+      font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+      padding: 12px 36px; border: none; border-radius: 4px;
       background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
-      color: #1a0a00;
-      cursor: pointer;
-      box-shadow: 0 0 30px rgba(245,200,66,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+      color: #1a0a00; cursor: pointer;
+      box-shadow: 0 0 24px rgba(245,200,66,0.35);
       transition: transform 0.2s, box-shadow 0.3s;
-      opacity: 0.5; pointer-events: none;
+      opacity: 0.4; pointer-events: none;
     }
     .select-btn.enabled { opacity: 1; pointer-events: all; }
-    .select-btn.enabled:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(245,200,66,0.7); }
+    .select-btn.enabled:active { transform: scale(0.97); }
+
+    /* ─── HERO POP-UP OVERLAY ─── */
+    .hero-popup-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(0,0,0,0.85);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+    .hero-popup-overlay.show { opacity: 1; pointer-events: all; }
+
+    .hero-popup {
+      background: linear-gradient(145deg, rgba(0,60,140,0.25), rgba(4,6,15,0.92));
+      border: 2px solid rgba(245,200,66,0.35);
+      border-radius: 16px;
+      padding: clamp(24px, 5vw, 40px);
+      max-width: 420px; width: 88vw;
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      transform: scale(0.7) translateY(30px);
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 0 60px rgba(0,191,255,0.2), 0 0 120px rgba(245,200,66,0.1);
+      position: relative;
+    }
+    .hero-popup-overlay.show .hero-popup {
+      transform: scale(1) translateY(0);
+    }
+
+    .popup-hero-icon {
+      font-size: clamp(4rem, 14vw, 6rem);
+      animation: popBounce 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes popBounce {
+      from { transform: scale(0) rotate(-15deg); }
+      to   { transform: scale(1) rotate(0); }
+    }
+
+    .popup-hero-name {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.3rem, 4vw, 2rem);
+      font-weight: 900; color: var(--gold);
+      text-shadow: 0 0 16px rgba(245,200,66,0.8), 0 2px 4px rgba(0,0,0,1);
+      letter-spacing: 3px;
+    }
+
+    .popup-hero-role {
+      font-size: clamp(0.65rem, 2vw, 0.85rem);
+      letter-spacing: 4px; color: var(--blue-glow);
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(0,212,255,0.8);
+    }
+
+    .popup-divider {
+      width: 80%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--blue-glow), transparent);
+    }
+
+    .popup-wish {
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      color: #fff; line-height: 1.7; font-weight: 500;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+      padding: 0 4px;
+    }
+    .popup-wish strong { color: var(--gold-light); }
+
+    .popup-close {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 10px 32px; border: 1px solid rgba(0,212,255,0.4);
+      border-radius: 4px; background: rgba(0,191,255,0.1);
+      color: var(--blue-glow); cursor: pointer;
+      transition: all 0.25s; margin-top: 4px;
+    }
+    .popup-close:active { transform: scale(0.96); background: rgba(0,191,255,0.2); }
 
     /* ══════════════════════════════
-       SCREEN 2 – CINEMATIC BIRTHDAY
+       SCREEN 2 – CINEMATIC REVEAL
     ══════════════════════════════ */
-    #screen2 { flex-direction: column; gap: 0; overflow: hidden; }
+    #screen2 { gap: 0; overflow: hidden; }
 
     .cinematic-bar {
       position: absolute; left: 0; right: 0;
-      height: 80px;
-      background: #000;
-      z-index: 5;
-      transition: height 1.2s cubic-bezier(0.77,0,0.18,1);
+      height: 60px; background: #000; z-index: 5;
+      transition: height 1s cubic-bezier(0.77,0,0.18,1);
     }
-    #topBar  { top: 0;    transform: translateY(0); }
-    #botBar  { bottom: 0; transform: translateY(0); }
-    #screen2.revealed #topBar { height: 0; }
-    #screen2.revealed #botBar { height: 0; }
+    #topBar { top: 0; } #botBar { bottom: 0; }
+    #screen2.revealed #topBar, #screen2.revealed #botBar { height: 0; }
 
     .bday-content {
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      gap: 20px; text-align: center;
-      padding: 20px;
-      z-index: 3;
-      opacity: 0; transform: translateY(30px);
-      transition: opacity 1.4s ease 1.1s, transform 1.4s ease 1.1s;
+      gap: clamp(12px, 2.5vh, 20px); text-align: center;
+      padding: 16px; z-index: 3;
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 1.2s ease 0.8s, transform 1.2s ease 0.8s;
     }
     #screen2.revealed .bday-content { opacity: 1; transform: translateY(0); }
 
     .hero-reveal-icon {
-      font-size: clamp(4rem, 12vw, 8rem);
-      animation: heroReveal 1s cubic-bezier(0.34,1.56,0.64,1) both;
-      filter: drop-shadow(0 0 30px rgba(0,191,255,0.8)) drop-shadow(0 0 60px rgba(245,200,66,0.5));
+      font-size: clamp(3.5rem, 12vw, 7rem);
+      animation: heroReveal 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
     }
     @keyframes heroReveal {
       from { transform: scale(0) rotate(-10deg); opacity: 0; }
-      to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+      to   { transform: scale(1) rotate(0); opacity: 1; }
     }
 
     .age-display {
-      position: relative;
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(5rem, 18vw, 11rem);
-      font-weight: 900;
-      line-height: 1;
+      font-size: clamp(4rem, 16vw, 10rem);
+      font-weight: 900; line-height: 1;
       background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--blue-glow));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      filter: drop-shadow(0 0 40px rgba(245,200,66,0.6));
-      animation: ageGlow 2.5s ease-in-out infinite alternate;
-    }
-    @keyframes ageGlow {
-      from { filter: drop-shadow(0 0 30px rgba(245,200,66,0.5)) drop-shadow(0 0 60px rgba(0,191,255,0.3)); }
-      to   { filter: drop-shadow(0 0 60px rgba(0,191,255,0.8)) drop-shadow(0 0 90px rgba(245,200,66,0.6)); }
-    }
-
-    .bday-title {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.4rem, 5vw, 3.2rem);
-      font-weight: 700;
-      line-height: 1.2;
-      text-align: center;
-      color: #fff;
-      text-shadow: 0 0 30px rgba(245,200,66,0.9), 0 0 60px rgba(245,200,66,0.4), 0 2px 8px rgba(0,0,0,1);
+      filter: drop-shadow(0 0 30px rgba(245,200,66,0.5));
     }
 
     .bday-name {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.8rem, 6vw, 4rem);
-      font-weight: 900;
-      color: #fff;
-      text-shadow: 0 0 40px rgba(0,212,255,1), 0 0 80px rgba(0,212,255,0.5), 0 2px 8px rgba(0,0,0,1);
+      font-size: clamp(1.4rem, 5vw, 3.5rem);
+      font-weight: 900; color: #fff;
+      text-shadow: 0 0 30px rgba(0,212,255,1), 0 2px 6px rgba(0,0,0,1);
       letter-spacing: 3px;
-      text-align: center;
       animation: namePulse 3s ease-in-out infinite alternate;
     }
 
+    .bday-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.1rem, 4vw, 2.8rem);
+      font-weight: 700; color: #fff;
+      text-shadow: 0 0 24px rgba(245,200,66,0.8), 0 2px 6px rgba(0,0,0,1);
+    }
+
     .bday-divider {
-      width: 300px; max-width: 80vw; height: 2px;
+      width: clamp(180px, 50vw, 300px); height: 2px;
       background: linear-gradient(90deg, transparent, var(--gold), var(--blue-glow), transparent);
-      box-shadow: 0 0 12px var(--gold);
     }
 
     .bday-message {
-      font-size: clamp(1rem, 2.5vw, 1.4rem);
-      font-weight: 600;
-      color: #ffffff;
-      max-width: 600px;
-      line-height: 1.7;
-      letter-spacing: 0.5px;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+      font-size: clamp(0.85rem, 2.5vw, 1.3rem);
+      font-weight: 600; color: #fff; max-width: 550px;
+      line-height: 1.6; text-shadow: 0 1px 5px rgba(0,0,0,0.9);
     }
+    .bday-message strong { color: var(--gold-light); }
 
     .hero-badge {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 10px 28px;
-      border: 1px solid rgba(245,200,66,0.4);
-      border-radius: 40px;
-      background: linear-gradient(135deg, rgba(245,200,66,0.1), rgba(0,191,255,0.08));
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px;
+      border: 1px solid rgba(245,200,66,0.35); border-radius: 30px;
+      background: linear-gradient(135deg, rgba(245,200,66,0.08), rgba(0,191,255,0.06));
       font-family: 'Cinzel', serif;
-      font-size: 0.9rem;
-      letter-spacing: 3px;
-      color: var(--gold);
-      text-transform: uppercase;
-      box-shadow: 0 0 20px rgba(245,200,66,0.2);
+      font-size: clamp(0.65rem, 2vw, 0.85rem);
+      letter-spacing: 2px; color: var(--gold); text-transform: uppercase;
     }
 
-    .next-btn {
+    .next-btn, .replay-btn {
       font-family: 'Cinzel', serif;
-      font-size: 0.9rem; font-weight: 700;
-      letter-spacing: 3px; text-transform: uppercase;
-      padding: 12px 40px;
-      border: 2px solid rgba(0,212,255,0.5); border-radius: 4px;
+      font-size: clamp(0.75rem, 2.2vw, 0.9rem);
+      font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      padding: 11px 32px;
+      border: 2px solid rgba(0,212,255,0.45); border-radius: 4px;
       background: rgba(0,191,255,0.08); color: var(--blue-glow);
-      cursor: pointer;
-      transition: all 0.3s;
-      text-shadow: 0 0 10px var(--blue-glow);
+      cursor: pointer; transition: all 0.25s;
+      text-shadow: 0 0 8px var(--blue-glow);
     }
-    .next-btn:hover { background: rgba(0,191,255,0.2); border-color: var(--blue-glow); transform: scale(1.04); box-shadow: 0 0 30px rgba(0,212,255,0.4); }
+    .next-btn:active, .replay-btn:active { transform: scale(0.96); background: rgba(0,191,255,0.2); }
 
     /* ══════════════════════════════
-       SCREEN 3 – MESSAGE / TRIBUTE
+       SCREEN 3 – TRIBUTE
     ══════════════════════════════ */
-    #screen3 { flex-direction: column; gap: 20px; padding: 24px; overflow-y: auto; }
+    #screen3 {
+      flex-direction: column; gap: 16px;
+      padding: 20px 16px; padding-bottom: 40px;
+      overflow-y: auto; overflow-x: hidden;
+      justify-content: flex-start; padding-top: 40px;
+      -webkit-overflow-scrolling: touch;
+    }
 
     .tribute-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.2rem, 4vw, 2.2rem);
-      color: #fff;
-      text-shadow: 0 0 20px rgba(245,200,66,0.9), 0 2px 6px rgba(0,0,0,1);
-      text-align: center;
-      letter-spacing: 3px;
+      font-size: clamp(1rem, 3.5vw, 2rem); color: #fff;
+      text-shadow: 0 0 16px rgba(245,200,66,0.8), 0 2px 5px rgba(0,0,0,1);
+      text-align: center; letter-spacing: 3px;
     }
 
     .tribute-name {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1rem, 3vw, 1.6rem);
-      color: #fff;
-      text-shadow: 0 0 20px rgba(0,212,255,0.9), 0 2px 6px rgba(0,0,0,1);
-      letter-spacing: 5px;
-      text-align: center;
+      font-size: clamp(0.85rem, 2.5vw, 1.4rem); color: #fff;
+      text-shadow: 0 0 16px rgba(0,212,255,0.9), 0 2px 5px rgba(0,0,0,1);
+      letter-spacing: 4px; text-align: center;
     }
 
     .stat-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      max-width: 680px;
-      width: 100%;
+      gap: clamp(8px, 2vw, 14px);
+      max-width: 600px; width: 100%;
     }
     .stat-card {
-      background: linear-gradient(145deg, rgba(0,80,160,0.15), rgba(4,6,15,0.7));
-      border: 1px solid rgba(245,200,66,0.2);
+      background: linear-gradient(145deg, rgba(0,60,140,0.15), rgba(4,6,15,0.7));
+      border: 1px solid rgba(245,200,66,0.18);
       border-radius: 8px;
-      padding: 18px 12px;
+      padding: clamp(12px, 2vw, 18px) 8px;
       display: flex; flex-direction: column;
-      align-items: center; gap: 6px;
-      position: relative; overflow: hidden;
+      align-items: center; gap: 4px;
+      position: relative;
     }
     .stat-card::after {
-      content: '';
-      position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
-    .stat-icon { font-size: 1.8rem; }
+    .stat-icon { font-size: clamp(1.2rem, 3vw, 1.8rem); }
     .stat-value {
       font-family: 'Cinzel', serif;
-      font-size: clamp(1.2rem, 3vw, 1.8rem);
-      font-weight: 700;
-      color: #fff;
-      text-shadow: 0 0 14px rgba(245,200,66,0.9), 0 1px 4px rgba(0,0,0,0.9);
+      font-size: clamp(1rem, 2.5vw, 1.6rem);
+      font-weight: 700; color: #fff;
+      text-shadow: 0 0 10px rgba(245,200,66,0.8), 0 1px 3px rgba(0,0,0,0.9);
     }
     .stat-label {
-      font-size: 0.65rem; letter-spacing: 3px;
-      color: #00d4ff;
-      text-transform: uppercase;
-      text-shadow: 0 0 8px rgba(0,212,255,0.8), 0 1px 3px rgba(0,0,0,0.9);
+      font-size: clamp(0.5rem, 1.5vw, 0.65rem);
+      letter-spacing: 2px; color: #00d4ff; text-transform: uppercase;
+      text-shadow: 0 0 6px rgba(0,212,255,0.7), 0 1px 2px rgba(0,0,0,0.9);
     }
 
     .message-box {
-      max-width: 680px; width: 100%;
-      background: linear-gradient(135deg, rgba(0,50,120,0.2), rgba(4,6,15,0.8));
-      border: 1px solid rgba(245,200,66,0.25);
+      max-width: 600px; width: 100%;
+      background: linear-gradient(135deg, rgba(0,40,100,0.2), rgba(4,6,15,0.82));
+      border: 1px solid rgba(245,200,66,0.22);
       border-radius: 10px;
-      padding: 28px 32px;
+      padding: clamp(18px, 4vw, 28px) clamp(16px, 4vw, 30px);
       position: relative;
     }
     .message-box::before {
-      content: '❝';
-      position: absolute; top: -12px; left: 20px;
-      font-size: 3rem; color: var(--gold); opacity: 0.4;
-      line-height: 1;
+      content: '❝'; position: absolute; top: -10px; left: 16px;
+      font-size: 2.5rem; color: var(--gold); opacity: 0.35; line-height: 1;
     }
     .message-text {
-      font-size: clamp(0.95rem, 2.2vw, 1.15rem);
-      line-height: 1.9;
-      color: #ffffff;
-      font-weight: 500;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+      font-size: clamp(0.85rem, 2.2vw, 1.1rem);
+      line-height: 1.8; color: #fff; font-weight: 500;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
-    .message-text strong { color: var(--gold-light); font-weight: 700; text-shadow: 0 0 10px rgba(245,200,66,0.8), 0 1px 4px rgba(0,0,0,0.9); }
+    .message-text strong {
+      color: var(--gold-light); font-weight: 700;
+      text-shadow: 0 0 8px rgba(245,200,66,0.7), 0 1px 3px rgba(0,0,0,0.9);
+    }
     .message-text .name-highlight {
-      color: #00d4ff;
-      font-weight: 800;
-      font-family: 'Cinzel', serif;
-      text-shadow: 0 0 16px rgba(0,212,255,0.9), 0 1px 4px rgba(0,0,0,0.9);
-      letter-spacing: 2px;
+      color: #00d4ff; font-weight: 800; font-family: 'Cinzel', serif;
+      text-shadow: 0 0 12px rgba(0,212,255,0.9), 0 1px 3px rgba(0,0,0,0.9);
+      letter-spacing: 1.5px;
     }
     .message-sig {
-      margin-top: 16px;
-      font-family: 'Cinzel', serif;
-      font-size: 0.85rem; letter-spacing: 3px;
-      color: #ffffff;
-      text-align: right;
-      text-shadow: 0 0 12px var(--blue-glow), 0 1px 4px rgba(0,0,0,0.9);
+      margin-top: 14px; font-family: 'Cinzel', serif;
+      font-size: clamp(0.7rem, 2vw, 0.85rem);
+      letter-spacing: 3px; color: #fff; text-align: right;
+      text-shadow: 0 0 10px var(--blue-glow), 0 1px 3px rgba(0,0,0,0.9);
     }
 
     .celebrate-btn {
       font-family: 'Cinzel', serif;
-      font-size: 1rem; font-weight: 700;
-      letter-spacing: 3px; text-transform: uppercase;
-      padding: 16px 52px;
-      border: none; border-radius: 4px;
+      font-size: clamp(0.8rem, 2.5vw, 1rem);
+      font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      padding: 14px 40px; border: none; border-radius: 4px;
       background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
-      color: #1a0a00;
-      cursor: pointer;
-      box-shadow: 0 0 40px rgba(245,200,66,0.5);
-      transition: transform 0.2s, box-shadow 0.3s;
+      color: #1a0a00; cursor: pointer;
+      box-shadow: 0 0 30px rgba(245,200,66,0.4);
+      transition: transform 0.2s;
+      flex-shrink: 0;
     }
-    .celebrate-btn:hover { transform: scale(1.06); box-shadow: 0 0 70px rgba(245,200,66,0.8); }
+    .celebrate-btn:active { transform: scale(0.96); }
+
+    /* ─── BLESSINGS ─── */
+    .blessings-header {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(0.85rem, 2.5vw, 1.4rem); color: #fff;
+      text-shadow: 0 0 16px rgba(245,200,66,0.8), 0 2px 5px rgba(0,0,0,1);
+      text-align: center; letter-spacing: 3px; text-transform: uppercase;
+    }
+
+    .blessings-divider {
+      width: clamp(160px, 50vw, 250px); height: 2px;
+      background: linear-gradient(90deg, transparent, var(--blue-glow), var(--gold), var(--blue-glow), transparent);
+    }
+
+    .blessings-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(8px, 2vw, 14px);
+      max-width: 600px; width: 100%;
+    }
+
+    .blessing-card {
+      background: linear-gradient(155deg, rgba(0,60,140,0.1), rgba(4,6,15,0.72));
+      border: 1px solid rgba(245,200,66,0.15);
+      border-radius: 10px;
+      padding: clamp(14px, 2.5vw, 20px) clamp(10px, 2vw, 16px);
+      display: flex; gap: 10px; align-items: flex-start;
+      opacity: 0; transform: translateY(16px);
+      animation: blessingIn 0.5s ease forwards;
+    }
+    .blessing-card:nth-child(1) { animation-delay: 0.05s; }
+    .blessing-card:nth-child(2) { animation-delay: 0.1s; }
+    .blessing-card:nth-child(3) { animation-delay: 0.15s; }
+    .blessing-card:nth-child(4) { animation-delay: 0.2s; }
+    .blessing-card:nth-child(5) { animation-delay: 0.25s; }
+    .blessing-card:nth-child(6) { animation-delay: 0.3s; }
+    .blessing-card:nth-child(7) { animation-delay: 0.35s; }
+    .blessing-card:nth-child(8) { animation-delay: 0.4s; }
+    @keyframes blessingIn { to { opacity: 1; transform: translateY(0); } }
+
+    .blessing-icon { font-size: clamp(1.4rem, 4vw, 2rem); flex-shrink: 0; line-height: 1; }
+    .blessing-body { display: flex; flex-direction: column; gap: 3px; }
+    .blessing-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.65rem, 2vw, 0.85rem);
+      font-weight: 700; color: var(--gold-light);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(245,200,66,0.5), 0 1px 2px rgba(0,0,0,0.9);
+    }
+    .blessing-text {
+      font-size: clamp(0.72rem, 2vw, 0.88rem);
+      color: #fff; line-height: 1.5;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+    }
 
     /* ══════════════════════════════
        SCREEN 4 – CELEBRATION
     ══════════════════════════════ */
-    #screen4 { flex-direction: column; gap: 22px; }
+    #screen4 { gap: clamp(14px, 3vh, 22px); padding: 20px; }
 
     .victory-text {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(2rem, 7vw, 4.5rem);
-      font-weight: 900;
-      text-align: center;
+      font-size: clamp(1.8rem, 7vw, 4.2rem);
+      font-weight: 900; text-align: center;
       background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--crimson), var(--blue-glow));
       background-size: 300% 300%;
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       animation: rainbowShift 3s ease-in-out infinite;
-      filter: drop-shadow(0 0 30px rgba(245,200,66,0.5));
     }
     @keyframes rainbowShift {
       0%   { background-position: 0% 50%; }
@@ -530,267 +575,142 @@
     }
 
     .firework-emojis {
-      font-size: clamp(2rem, 6vw, 3.5rem);
-      animation: popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
-      letter-spacing: 12px;
+      font-size: clamp(1.6rem, 5vw, 3rem);
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+      letter-spacing: 8px;
     }
-    @keyframes popIn {
-      from { transform: scale(0); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
-    }
-
-    .final-message {
-      font-size: clamp(1rem, 2.5vw, 1.3rem);
-      color: #ffffff;
-      text-align: center;
-      max-width: 500px;
-      line-height: 1.7;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.9);
-      font-weight: 600;
-    }
+    @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
     .final-name {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.5rem, 4vw, 2.5rem);
-      font-weight: 900;
-      color: #fff;
-      text-shadow: 0 0 30px rgba(245,200,66,1), 0 0 60px rgba(245,200,66,0.5), 0 2px 8px rgba(0,0,0,1);
+      font-size: clamp(1.2rem, 4vw, 2.2rem);
+      font-weight: 900; color: #fff;
+      text-shadow: 0 0 24px rgba(245,200,66,1), 0 2px 6px rgba(0,0,0,1);
       letter-spacing: 3px;
-      text-align: center;
       animation: namePulse 2s ease-in-out infinite alternate;
     }
 
-    .replay-btn {
-      font-family: 'Cinzel', serif;
-      font-size: 0.9rem; font-weight: 700;
-      letter-spacing: 3px; text-transform: uppercase;
-      padding: 12px 40px;
-      border: 2px solid rgba(245,200,66,0.5); border-radius: 4px;
-      background: rgba(245,200,66,0.07); color: var(--gold);
-      cursor: pointer; transition: all 0.3s;
+    .final-message {
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+      color: #fff; text-align: center; max-width: 460px;
+      line-height: 1.7; font-weight: 600;
+      text-shadow: 0 1px 5px rgba(0,0,0,0.9);
     }
-    .replay-btn:hover { background: rgba(245,200,66,0.15); box-shadow: 0 0 30px rgba(245,200,66,0.4); transform: scale(1.04); }
+
+    .replay-btn {
+      border-color: rgba(245,200,66,0.4);
+      color: var(--gold);
+      background: rgba(245,200,66,0.06);
+    }
 
     /* ─── CONFETTI ─── */
     .confetti-piece {
       position: fixed; top: -20px;
-      width: 8px; height: 16px;
       border-radius: 2px;
       animation: confettiFall linear forwards;
       z-index: 20; pointer-events: none;
     }
     @keyframes confettiFall {
-      0%   { transform: translateY(0) rotate(0deg);      opacity: 1; }
+      0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
       100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
 
-    /* ─── SCANLINES ─── */
-    .scanlines {
-      position: fixed; inset: 0; z-index: 3; pointer-events: none;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px, transparent 3px,
-        rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px
-      );
-    }
-
-    /* ─── TOP HUD ─── */
+    /* ─── HUD ─── */
     .hud {
-      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
       z-index: 15;
-      display: flex; align-items: center; gap: 20px;
-      opacity: 0; transition: opacity 0.8s 0.5s;
+      display: flex; align-items: center; gap: 14px;
+      opacity: 0; transition: opacity 0.6s 0.3s;
     }
     .hud.show { opacity: 1; }
     .hud-gem {
-      width: 10px; height: 10px; border-radius: 50%;
+      width: 8px; height: 8px; border-radius: 50%;
       background: var(--blue-glow);
-      box-shadow: 0 0 10px var(--blue-glow);
+      box-shadow: 0 0 8px var(--blue-glow);
       animation: gemPulse 1.5s ease-in-out infinite;
     }
-    .hud-gem:nth-child(3) { background: var(--gold); box-shadow: 0 0 10px var(--gold); animation-delay: 0.4s; }
-    @keyframes gemPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .hud-gem:nth-child(3) { background: var(--gold); box-shadow: 0 0 8px var(--gold); animation-delay: 0.4s; }
+    @keyframes gemPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
     .hud-title {
       font-family: 'Cinzel', serif;
-      font-size: 0.75rem; letter-spacing: 5px;
-      color: rgba(245,200,66,0.7);
-      text-transform: uppercase;
+      font-size: clamp(0.5rem, 1.8vw, 0.72rem);
+      letter-spacing: 4px; color: rgba(245,200,66,0.65); text-transform: uppercase;
     }
 
-    /* ─── SCROLL INDICATOR ─── */
-    .scroll-note {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      font-size: 0.7rem; letter-spacing: 3px; color: rgba(255,255,255,0.3);
-      text-transform: uppercase; z-index: 15;
-      animation: fadeUpDown 2s ease-in-out infinite;
-    }
-    @keyframes fadeUpDown { 0%,100% { opacity: 0.3; transform: translateX(-50%) translateY(0); } 50% { opacity: 0.7; transform: translateX(-50%) translateY(-6px); } }
-
-    /* ─── BLESSINGS SECTION ─── */
-    .blessings-header {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1rem, 3vw, 1.6rem);
-      color: #fff;
-      text-shadow: 0 0 20px rgba(245,200,66,0.9), 0 2px 6px rgba(0,0,0,1);
-      text-align: center;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      margin-top: 8px;
-    }
-
-    .blessings-divider {
-      width: 250px; max-width: 70vw; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--blue-glow), var(--gold), var(--blue-glow), transparent);
-      box-shadow: 0 0 12px var(--blue-glow);
-    }
-
-    .blessings-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      max-width: 680px;
-      width: 100%;
-    }
-
-    .blessing-card {
-      position: relative;
-      background: linear-gradient(155deg, rgba(0,80,180,0.12), rgba(4,6,15,0.75));
-      border: 1px solid rgba(245,200,66,0.18);
-      border-radius: 10px;
-      padding: 20px 16px;
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-      overflow: hidden;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: blessingFadeIn 0.6s ease forwards;
-    }
-    .blessing-card:nth-child(1) { animation-delay: 0.1s; }
-    .blessing-card:nth-child(2) { animation-delay: 0.2s; }
-    .blessing-card:nth-child(3) { animation-delay: 0.3s; }
-    .blessing-card:nth-child(4) { animation-delay: 0.4s; }
-    .blessing-card:nth-child(5) { animation-delay: 0.5s; }
-    .blessing-card:nth-child(6) { animation-delay: 0.6s; }
-    .blessing-card:nth-child(7) { animation-delay: 0.7s; }
-    .blessing-card:nth-child(8) { animation-delay: 0.8s; }
-
-    @keyframes blessingFadeIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .blessing-card::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, transparent 50%, rgba(0,212,255,0.04));
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .blessing-card:hover {
-      border-color: rgba(0,212,255,0.5);
-      box-shadow: 0 0 25px rgba(0,212,255,0.2);
-      transform: translateY(-3px);
-      transition: all 0.3s ease;
-    }
-    .blessing-card:hover::before { opacity: 1; }
-
-    .blessing-card::after {
-      content: '';
-      position: absolute; bottom: 0; left: 10%; right: 10%; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(245,200,66,0.3), transparent);
-    }
-
-    .blessing-icon {
-      font-size: 2rem;
-      flex-shrink: 0;
-      filter: drop-shadow(0 0 8px rgba(0,191,255,0.5));
-      line-height: 1;
-      padding-top: 2px;
-    }
-
-    .blessing-body {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .blessing-title {
-      font-family: 'Cinzel', serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--gold-light);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(245,200,66,0.6), 0 1px 3px rgba(0,0,0,0.9);
-    }
-
-    .blessing-text {
-      font-size: 0.88rem;
-      color: #fff;
-      line-height: 1.6;
-      font-weight: 400;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
-    }
-
-    /* Responsive tweaks */
+    /* ─── MOBILE SPECIFIC ─── */
     @media (max-width: 600px) {
-      .hero-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
-      .hero-card { padding: 10px 4px; }
-      .hero-icon { font-size: 1.6rem; }
-      .stat-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-      .message-box { padding: 20px 18px; }
-      .blessings-grid { grid-template-columns: 1fr; gap: 10px; }
-      .blessing-card { padding: 16px 12px; }
+      #screen0 { gap: clamp(12px, 3vh, 24px); }
+      .hero-grid { gap: 6px; }
+      .hero-card { padding: 8px 4px; gap: 4px; border-radius: 6px; }
+      .stat-grid { gap: 6px; }
+      .stat-card { padding: 10px 6px; }
+      .blessings-grid { grid-template-columns: 1fr; gap: 8px; }
+      .blessing-card { padding: 12px 10px; }
+      .message-box { padding: 16px 14px; }
+      #screen3 { padding: 16px 12px; padding-top: 36px; gap: 12px; }
+      .scanlines { display: none; }
+    }
+
+    @media (max-width: 360px) {
+      .hero-grid { grid-template-columns: repeat(4, 1fr); gap: 4px; }
+      .hero-icon { font-size: 1.4rem; }
+      .hero-name { font-size: 0.5rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- Background -->
 <div id="bgWrap"></div>
 <div id="vignette"></div>
 <div id="lightning"></div>
 <div class="scanlines"></div>
 <canvas id="particleCanvas"></canvas>
 
-<!-- HUD -->
 <div class="hud" id="hud">
   <div class="hud-gem"></div>
   <div class="hud-title">Mobile Legends: Birthday Edition</div>
   <div class="hud-gem"></div>
 </div>
 
-<!-- ══ SCREEN 0: PRESS START ══ -->
+<!-- HERO POP-UP -->
+<div class="hero-popup-overlay" id="heroPopup">
+  <div class="hero-popup">
+    <div class="popup-hero-icon" id="popupIcon">🦅</div>
+    <div class="popup-hero-name" id="popupName">Pharsa</div>
+    <div class="popup-hero-role" id="popupRole">Mage</div>
+    <div class="popup-divider"></div>
+    <div class="popup-wish" id="popupWish">...</div>
+    <button class="popup-close" id="popupClose">✕ &nbsp; Close</button>
+  </div>
+</div>
+
+<!-- SCREEN 0: PRESS START -->
 <div class="screen active" id="screen0">
   <div class="emblem-wrap">
     <div class="ring"></div>
     <div class="ring"></div>
     <div class="ring"></div>
-    <img src="assets/mlbb_emblem.png" alt="MLBB Emblem" id="emblemImg"
-         onerror="this.style.display='none'; document.querySelector('.emblem-emoji').style.display='block'"/>
-    <span class="emblem-emoji" style="display:none;font-size:7rem;filter:drop-shadow(0 0 30px rgba(0,191,255,0.7))">⚔️</span>
+    <img src="assets/mlbb_emblem.png" alt="MLBB Emblem"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+    <span style="display:none;font-size:5rem;">⚔️</span>
   </div>
   <div class="game-title">Mobile Legends: Bang Bang</div>
   <div class="hero-text">HAPPY<br/>BIRTHDAY</div>
-  <div class="name-display">⚔️ &nbsp; ANVEX TAMANG &nbsp; ⚔️</div>
+  <div class="name-display">⚔️&nbsp; ANVEX TAMANG &nbsp;⚔️</div>
   <button class="press-start" id="startBtn">▶ &nbsp; Press Start</button>
 </div>
 
-<!-- ══ SCREEN 1: PICK YOUR HERO ══ -->
+<!-- SCREEN 1: HERO SELECT -->
 <div class="screen" id="screen1">
-  <div class="section-label">Step 1 — Choose a Hero for the Birthday Legend</div>
-
-  <div class="hero-grid" id="heroGrid">
-    <!-- Cards injected by JS -->
-  </div>
-
+  <div class="section-label">Choose a Hero for the Birthday Legend</div>
+  <div class="hero-grid" id="heroGrid"></div>
   <button class="select-btn" id="selectBtn">⚔ &nbsp; Lock In &nbsp; ⚔</button>
 </div>
 
-<!-- ══ SCREEN 2: CINEMATIC BIRTHDAY REVEAL ══ -->
+<!-- SCREEN 2: CINEMATIC REVEAL -->
 <div class="screen" id="screen2">
   <div class="cinematic-bar" id="topBar"></div>
   <div class="cinematic-bar" id="botBar"></div>
-
   <div class="bday-content">
     <div id="selectedHeroIcon" class="hero-reveal-icon">⚔️</div>
     <div class="age-display">18</div>
@@ -806,42 +726,18 @@
   </div>
 </div>
 
-<!-- ══ SCREEN 3: MESSAGE / TRIBUTE ══ -->
+<!-- SCREEN 3: TRIBUTE -->
 <div class="screen" id="screen3">
   <div class="tribute-title">🏆 &nbsp; The Legend's Tribute &nbsp; 🏆</div>
   <div class="tribute-name">— ANVEX TAMANG —</div>
 
   <div class="stat-grid">
-    <div class="stat-card">
-      <div class="stat-icon">⚡</div>
-      <div class="stat-value">18</div>
-      <div class="stat-label">Years Leveled</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">🎯</div>
-      <div class="stat-value">∞</div>
-      <div class="stat-label">Potential</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">🔥</div>
-      <div class="stat-value">MAX</div>
-      <div class="stat-label">Legendary</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">💎</div>
-      <div class="stat-value">SSS</div>
-      <div class="stat-label">Bro Rank</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">🌟</div>
-      <div class="stat-value">100%</div>
-      <div class="stat-label">Win Rate</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">👑</div>
-      <div class="stat-value">MVP</div>
-      <div class="stat-label">Always</div>
-    </div>
+    <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-value">18</div><div class="stat-label">Years Leveled</div></div>
+    <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-value">∞</div><div class="stat-label">Potential</div></div>
+    <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-value">MAX</div><div class="stat-label">Legendary</div></div>
+    <div class="stat-card"><div class="stat-icon">💎</div><div class="stat-value">SSS</div><div class="stat-label">Bro Rank</div></div>
+    <div class="stat-card"><div class="stat-icon">🌟</div><div class="stat-value">100%</div><div class="stat-label">Win Rate</div></div>
+    <div class="stat-card"><div class="stat-icon">👑</div><div class="stat-value">MVP</div><div class="stat-label">Always</div></div>
   </div>
 
   <div class="message-box">
@@ -862,71 +758,23 @@
   </div>
 
   <div class="blessings-divider"></div>
-  <div class="blessings-header">✨ &nbsp; 18 Blessings For You &nbsp; ✨</div>
+  <div class="blessings-header">✨ &nbsp; Blessings For You &nbsp; ✨</div>
 
   <div class="blessings-grid">
-    <div class="blessing-card">
-      <div class="blessing-icon">⚔️</div>
-      <div class="blessing-body">
-        <div class="blessing-title">Strength</div>
-        <div class="blessing-text">May you have the strength of a Mythic Glory warrior — unbreakable, unstoppable, and always rising.</div>
-      </div>
-    </div>
-    <div class="blessing-card">
-      <div class="blessing-icon">🛡️</div>
-      <div class="blessing-body">
-        <div class="blessing-title">Protection</div>
-        <div class="blessing-text">May life's turrets never touch you, and may you always have a Tank by your side when it gets tough.</div>
-      </div>
-    </div>
-    <div class="blessing-card">
-      <div class="blessing-icon">💰</div>
-      <div class="blessing-body">
-        <div class="blessing-title">Prosperity</div>
-        <div class="blessing-text">May your gold always be overflowing, your inventory full, and your pockets never empty IRL.</div>
-      </div>
-    </div>
-    <div class="blessing-card">
-      <div class="blessing-icon">❤️</div>
-      <div class="blessing-body">
-        <div class="blessing-title">Love</div>
-        <div class="blessing-text">May you find someone who supports you like the perfect duo — always watching your back, never AFK.</div>
-      </div>
-    </div>
-    <div class="blessing-card">
-      <div class="blessing-icon">🌟</div>
-      <div class="blessing-body">
-        <div class="blessing-title">Success</div>
-        <div class="blessing-text">May every goal you chase end in VICTORY, and every dream you carry be a Legendary play.</div>
-      </div>
-    </div>
-    <div class="blessing-card">
-      <div class="blessing-icon">🧠</div>
-      <div class="blessing-body">
-        <div class="blessing-title">Wisdom</div>
-        <div class="blessing-text">May you always read the map of life well — knowing when to push, when to retreat, and when to go all in.</div>
-      </div>
-    </div>
-    <div class="blessing-card">
-      <div class="blessing-icon">🔥</div>
-      <div class="blessing-body">
-        <div class="blessing-title">Passion</div>
-        <div class="blessing-text">May the fire inside you burn brighter than a Lord buff — lighting up every room and every battlefield.</div>
-      </div>
-    </div>
-    <div class="blessing-card">
-      <div class="blessing-icon">👑</div>
-      <div class="blessing-body">
-        <div class="blessing-title">Greatness</div>
-        <div class="blessing-text">May you reign like a King — respected by allies, feared by enemies, and loved by everyone who truly knows you.</div>
-      </div>
-    </div>
+    <div class="blessing-card"><div class="blessing-icon">⚔️</div><div class="blessing-body"><div class="blessing-title">Strength</div><div class="blessing-text">May you have the strength of a Mythic Glory warrior — unbreakable, unstoppable, and always rising.</div></div></div>
+    <div class="blessing-card"><div class="blessing-icon">🛡️</div><div class="blessing-body"><div class="blessing-title">Protection</div><div class="blessing-text">May life's turrets never touch you, and may you always have a Tank by your side when it gets tough.</div></div></div>
+    <div class="blessing-card"><div class="blessing-icon">💰</div><div class="blessing-body"><div class="blessing-title">Prosperity</div><div class="blessing-text">May your gold always be overflowing, your inventory full, and your pockets never empty IRL.</div></div></div>
+    <div class="blessing-card"><div class="blessing-icon">❤️</div><div class="blessing-body"><div class="blessing-title">Love</div><div class="blessing-text">May you find someone who supports you like the perfect duo — always watching your back, never AFK.</div></div></div>
+    <div class="blessing-card"><div class="blessing-icon">🌟</div><div class="blessing-body"><div class="blessing-title">Success</div><div class="blessing-text">May every goal you chase end in VICTORY, and every dream you carry be a Legendary play.</div></div></div>
+    <div class="blessing-card"><div class="blessing-icon">🧠</div><div class="blessing-body"><div class="blessing-title">Wisdom</div><div class="blessing-text">May you always read the map of life well — knowing when to push, when to retreat, and when to go all in.</div></div></div>
+    <div class="blessing-card"><div class="blessing-icon">🔥</div><div class="blessing-body"><div class="blessing-title">Passion</div><div class="blessing-text">May the fire inside you burn brighter than a Lord buff — lighting up every room and every battlefield.</div></div></div>
+    <div class="blessing-card"><div class="blessing-icon">👑</div><div class="blessing-body"><div class="blessing-title">Greatness</div><div class="blessing-text">May you reign like a King — respected by allies, feared by enemies, and loved by everyone who truly knows you.</div></div></div>
   </div>
 
   <button class="celebrate-btn" id="celebrateBtn">🎆 &nbsp; Unleash the Celebration &nbsp; 🎆</button>
 </div>
 
-<!-- ══ SCREEN 4: CELEBRATION ══ -->
+<!-- SCREEN 4: CELEBRATION -->
 <div class="screen" id="screen4">
   <div class="firework-emojis" style="animation-delay:0s">🎆🎇✨</div>
   <div class="victory-text">VICTORY!<br/>LEGENDARY!</div>
@@ -941,26 +789,36 @@
   <button class="replay-btn" id="replayBtn">↺ &nbsp; Play Again</button>
 </div>
 
-<div class="scroll-note" id="scrollNote" style="display:none">scroll to read ↓</div>
-
 <script>
-// ── HERO DATA ──────────────────────────────────────────────────
+// ── DETECT MOBILE ────────────────────────────────────────────────
+const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+// ── HERO DATA WITH BIRTHDAY WISHES ──────────────────────────────
 const heroes = [
-  { name: "Layla",     role: "Marksman", icon: "🏹", color: "#ff77aa" },
-  { name: "Alucard",  role: "Fighter",  icon: "🧛", color: "#cc44ff" },
-  { name: "Gusion",   role: "Assassin", icon: "⚡", color: "#00d4ff" },
-  { name: "Kagura",   role: "Mage",     icon: "🌸", color: "#ff99cc" },
-  { name: "Chou",     role: "Fighter",  icon: "👊", color: "#ff8800" },
-  { name: "Ling",     role: "Assassin", icon: "🌀", color: "#66eeff" },
-  { name: "Pharsa",   role: "Mage",     icon: "🦅", color: "#aa66ff" },
-  { name: "Lancelot", role: "Assassin", icon: "⚔️", color: "#f5c842" },
+  { name: "Layla",     role: "Marksman", icon: "🏹", color: "#ff77aa",
+    wish: "Happy birthday, <strong>Anvex</strong>! 🎯 Like my ultimate, may your dreams have <strong>unlimited range</strong> — reaching farther than anyone ever expected. Aim high, hit hard, and never stop shooting for the stars! 🌟" },
+  { name: "Alucard",  role: "Fighter",  icon: "🧛", color: "#cc44ff",
+    wish: "Yo <strong>Anvex</strong>! 🗡️ Today you turn 18 — time to go <strong>full lifesteal mode</strong>. Take everything life throws at you and turn it into strength. You're built different, bro. <strong>No retreat, only domination!</strong> 💪" },
+  { name: "Gusion",   role: "Assassin", icon: "⚡", color: "#00d4ff",
+    wish: "Happy 18th, <strong>Anvex</strong>! ⚡ Like my daggers, may your moves be <strong>swift and precise</strong>. You've got the talent, the speed, and the style — now go <strong>one-combo</strong> every challenge life throws at you! 🔥" },
+  { name: "Kagura",   role: "Mage",     icon: "🌸", color: "#ff99cc",
+    wish: "Dear <strong>Anvex</strong>! 🌸 Turning 18 is like opening your umbrella for the first time — a whole new world of <strong>magic awaits</strong>. May your path always bloom with beauty, wisdom, and <strong>unstoppable power</strong>! ✨" },
+  { name: "Chou",     role: "Fighter",  icon: "👊", color: "#ff8800",
+    wish: "Yooo <strong>Anvex</strong>! 👊 18 years and you're still <strong>undefeated</strong>! Like my kicks, may you <strong>break through every wall</strong> life puts in front of you. Stay fierce, stay free, stay legendary! 🥊🔥" },
+  { name: "Ling",     role: "Assassin", icon: "🌀", color: "#66eeff",
+    wish: "Happy birthday, <strong>Anvex</strong>! 🌀 At 18, you're ready to <strong>fly above it all</strong> — like me on the walls, untouchable. May you always find the <strong>highest ground</strong> and strike when the moment is right! 🗡️" },
+  { name: "Pharsa",   role: "Mage",     icon: "🦅", color: "#aa66ff",
+    wish: "Soar high, <strong>Anvex</strong>! 🦅 Turning 18 means you can finally <strong>see the whole map</strong> of life. Like my wings, may your vision be <strong>limitless</strong> and your strikes <strong>devastating</strong>. The sky is yours! 💜" },
+  { name: "Lancelot", role: "Assassin", icon: "⚔️", color: "#f5c842",
+    wish: "Happy 18th, <strong>Anvex</strong>! ⚔️ A true swordsman knows his moment — and <strong>this is yours</strong>. Dash through every obstacle with grace, pierce every doubt, and emerge as the <strong>Legendary hero</strong> you were born to be! 👑" },
 ];
 
-// ── PARTICLE SYSTEM ──────────────────────────────────────────────
+// ── OPTIMIZED PARTICLE SYSTEM ─────────────────────────────────────
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
 let W, H;
+const PARTICLE_COUNT = isMobile ? 35 : 90;
 
 function resizeCanvas() {
   W = canvas.width = window.innerWidth;
@@ -974,12 +832,12 @@ class Particle {
   reset() {
     this.x = Math.random() * W;
     this.y = Math.random() * H;
-    this.vx = (Math.random() - 0.5) * 0.4;
-    this.vy = -Math.random() * 0.6 - 0.2;
-    this.r = Math.random() * 2 + 0.5;
-    this.alpha = Math.random() * 0.6 + 0.2;
+    this.vx = (Math.random() - 0.5) * 0.35;
+    this.vy = -Math.random() * 0.5 - 0.15;
+    this.r = Math.random() * 1.8 + 0.4;
+    this.alpha = Math.random() * 0.5 + 0.15;
     this.life = 0;
-    this.maxLife = Math.random() * 200 + 100;
+    this.maxLife = Math.random() * 180 + 80;
     const rnd = Math.random();
     this.color = rnd < 0.4 ? '#f5c842' : rnd < 0.75 ? '#00d4ff' : '#ffffff';
   }
@@ -988,37 +846,41 @@ class Particle {
     if (this.life > this.maxLife || this.y < -10) this.reset();
   }
   draw() {
-    ctx.save();
     ctx.globalAlpha = this.alpha * (1 - this.life / this.maxLife);
     ctx.fillStyle = this.color;
-    ctx.shadowBlur = 8; ctx.shadowColor = this.color;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
     ctx.fill();
-    ctx.restore();
   }
 }
 
-for (let i = 0; i < 120; i++) particles.push(new Particle());
+for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
 
 function animParticles() {
   ctx.clearRect(0, 0, W, H);
-  particles.forEach(p => { p.update(); p.draw(); });
+  // No shadowBlur on mobile for performance
+  if (!isMobile) { ctx.shadowBlur = 6; ctx.shadowColor = '#00d4ff'; }
+  for (let i = 0; i < particles.length; i++) {
+    particles[i].update();
+    particles[i].draw();
+  }
+  if (!isMobile) { ctx.shadowBlur = 0; }
+  ctx.globalAlpha = 1;
   requestAnimationFrame(animParticles);
 }
 animParticles();
 
-// ── LIGHTNING EFFECT ─────────────────────────────────────────────
+// ── LIGHTNING ─────────────────────────────────────────────────────
 const lightning = document.getElementById('lightning');
 function flashLightning() {
   lightning.style.opacity = '1';
-  setTimeout(() => { lightning.style.opacity = '0'; }, 120);
+  setTimeout(() => { lightning.style.opacity = '0'; }, 100);
   setTimeout(() => {
-    lightning.style.opacity = '0.7';
-    setTimeout(() => { lightning.style.opacity = '0'; }, 80);
-  }, 180);
+    lightning.style.opacity = '0.6';
+    setTimeout(() => { lightning.style.opacity = '0'; }, 70);
+  }, 160);
 }
-setInterval(() => { if (Math.random() < 0.3) flashLightning(); }, 4000);
+setInterval(() => { if (Math.random() < 0.25) flashLightning(); }, isMobile ? 6000 : 4000);
 
 // ── SCREEN MANAGEMENT ────────────────────────────────────────────
 let currentScreen = 0;
@@ -1026,18 +888,41 @@ function goTo(n) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen' + n).classList.add('active');
   currentScreen = n;
+  // Reset scroll for screen 3
+  if (n === 3) document.getElementById('screen3').scrollTop = 0;
 }
 
-// ── HERO GRID BUILD ──────────────────────────────────────────────
+// ── HERO POPUP ───────────────────────────────────────────────────
+const popupOverlay = document.getElementById('heroPopup');
+const popupIcon = document.getElementById('popupIcon');
+const popupName = document.getElementById('popupName');
+const popupRole = document.getElementById('popupRole');
+const popupWish = document.getElementById('popupWish');
+
+function showHeroPopup(hero) {
+  popupIcon.textContent = hero.icon;
+  popupName.textContent = hero.name;
+  popupRole.textContent = hero.role;
+  popupWish.innerHTML = hero.wish;
+  popupOverlay.classList.add('show');
+}
+
+document.getElementById('popupClose').addEventListener('click', () => {
+  popupOverlay.classList.remove('show');
+});
+popupOverlay.addEventListener('click', (e) => {
+  if (e.target === popupOverlay) popupOverlay.classList.remove('show');
+});
+
+// ── HERO GRID ────────────────────────────────────────────────────
 let selectedHero = null;
 const grid = document.getElementById('heroGrid');
 const selectBtn = document.getElementById('selectBtn');
 
-heroes.forEach((h, i) => {
+heroes.forEach((h) => {
   const card = document.createElement('div');
   card.className = 'hero-card';
   card.innerHTML = `
-    <div class="hero-glow"></div>
     <div class="hero-icon">${h.icon}</div>
     <div class="hero-name">${h.name}</div>
     <div class="hero-role">${h.role}</div>
@@ -1047,9 +932,8 @@ heroes.forEach((h, i) => {
     card.classList.add('selected');
     selectedHero = h;
     selectBtn.classList.add('enabled');
-    // play a little pulse
-    card.style.animation = 'none';
-    card.offsetHeight;
+    // Show character birthday wish popup!
+    showHeroPopup(h);
   });
   grid.appendChild(card);
 });
@@ -1059,40 +943,38 @@ document.getElementById('startBtn').addEventListener('click', () => {
   document.getElementById('bgWrap').classList.add('lit');
   document.getElementById('hud').classList.add('show');
   flashLightning();
-  setTimeout(() => goTo(1), 400);
+  setTimeout(() => goTo(1), 350);
 });
 
 // ── SCREEN 1 → 2 ────────────────────────────────────────────────
 selectBtn.addEventListener('click', () => {
   if (!selectedHero) return;
   goTo(2);
-  // Set chosen hero in screen 2
   document.getElementById('selectedHeroIcon').textContent = selectedHero.icon;
   document.getElementById('heroNameBadge').textContent = selectedHero.name + ' – ' + selectedHero.role;
-  // Trigger cinematic reveal after short delay
   setTimeout(() => {
     document.getElementById('screen2').classList.add('revealed');
     flashLightning();
-  }, 400);
+  }, 350);
 });
 
 // ── SCREEN 2 → 3 ────────────────────────────────────────────────
-document.getElementById('toMsgBtn').addEventListener('click', () => {
-  goTo(3);
-});
+document.getElementById('toMsgBtn').addEventListener('click', () => goTo(3));
 
-// ── SCREEN 3 → 4 (CELEBRATE) ─────────────────────────────────────
+// ── SCREEN 3 → 4 ────────────────────────────────────────────────
 document.getElementById('celebrateBtn').addEventListener('click', () => {
   goTo(4);
-  launchConfetti();
-  launchConfetti(300);
-  launchConfetti(600);
+  const count = isMobile ? 25 : 50;
+  launchConfetti(0, count);
+  launchConfetti(300, count);
   flashLightning();
-  setTimeout(flashLightning, 800);
-  setTimeout(flashLightning, 1600);
+  if (!isMobile) {
+    launchConfetti(600, count);
+    setTimeout(flashLightning, 800);
+  }
 });
 
-// ── REPLAY ──────────────────────────────────────────────────────
+// ── REPLAY ───────────────────────────────────────────────────────
 document.getElementById('replayBtn').addEventListener('click', () => {
   selectedHero = null;
   document.querySelectorAll('.hero-card').forEach(c => c.classList.remove('selected'));
@@ -1104,34 +986,34 @@ document.getElementById('replayBtn').addEventListener('click', () => {
 });
 
 // ── CONFETTI ─────────────────────────────────────────────────────
-const CONFETTI_COLORS = ['#f5c842','#00d4ff','#ff77aa','#7b2fff','#ff8800','#66eeff','#e63946','#ffffff'];
-function launchConfetti(delay = 0) {
+const CONFETTI_COLORS = ['#f5c842','#00d4ff','#ff77aa','#7b2fff','#ff8800','#66eeff','#e63946','#fff'];
+function launchConfetti(delay = 0, count = 50) {
   setTimeout(() => {
-    for (let i = 0; i < 60; i++) {
-      const piece = document.createElement('div');
-      piece.className = 'confetti-piece';
-      piece.style.left = Math.random() * 100 + 'vw';
-      piece.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
-      piece.style.width = (Math.random() * 10 + 5) + 'px';
-      piece.style.height = (Math.random() * 16 + 8) + 'px';
-      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-      const dur = Math.random() * 2.5 + 2;
-      piece.style.animationDuration = dur + 's';
-      piece.style.animationDelay = Math.random() * 0.8 + 's';
-      document.body.appendChild(piece);
-      setTimeout(() => piece.remove(), (dur + 1.5) * 1000);
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'confetti-piece';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+      p.style.width = (Math.random() * 8 + 4) + 'px';
+      p.style.height = (Math.random() * 14 + 6) + 'px';
+      p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      const dur = Math.random() * 2 + 2;
+      p.style.animationDuration = dur + 's';
+      p.style.animationDelay = Math.random() * 0.6 + 's';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), (dur + 1) * 1000);
     }
   }, delay);
 }
 
-// ── AMBIENT INTERACTION ──────────────────────────────────────────
-document.addEventListener('mousemove', (e) => {
-  const xPct = e.clientX / window.innerWidth;
-  const yPct = e.clientY / window.innerHeight;
-  // Subtle parallax on bg
-  const bg = document.getElementById('bgWrap');
-  bg.style.transform = `translate(${(xPct - 0.5) * -12}px, ${(yPct - 0.5) * -8}px) scale(1.04)`;
-});
+// ── PARALLAX (desktop only) ──────────────────────────────────────
+if (!isMobile) {
+  document.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth - 0.5) * -8;
+    const y = (e.clientY / window.innerHeight - 0.5) * -5;
+    document.getElementById('bgWrap').style.transform = `translate(${x}px, ${y}px) scale(1.03)`;
+  });
+}
 </script>
 </body>
 </html>
