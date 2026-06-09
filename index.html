@@ -3,947 +3,224 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Happy Birthday My Love 💖</title>
-  <meta name="description" content="A romantic anime-themed birthday wish for the best girlfriend!" />
+  <title>I Love You ❤️</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    :root {
-      --pink-main: #ff85a2;
-      --pink-light: #ffb3c6;
-      --pink-dark: #ff4d6d;
-      --red-glow: #c9184a;
-      --gold: #ffd166;
-      --bg-dark: #2b0a16;
-      --text-main: #fff0f3;
-    }
-
-    html { height: 100%; }
-    body {
-      min-height: 100%;
-      overflow: hidden;
-      background: var(--bg-dark);
+    body, html {
+      width: 100%; height: 100%;
+      background: #0f0c29;  /* fallback for old browsers */
+      background: linear-gradient(to bottom, #24243e, #302b63, #0f0c29);
       font-family: 'Quicksand', sans-serif;
-      color: var(--text-main);
-      cursor: default;
+      color: #fff;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ─── GPU HINTS ─── */
-    .screen, #bgGradient, .hero-card, .blessing-card,
-    .confetti-piece, .emblem-wrap, .hero-popup-overlay {
-      will-change: transform, opacity;
+    /* ─── CANVAS PARTICLES ─── */
+    canvas {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
     }
 
-    /* ─── CANVAS ─── */
-    #particleCanvas {
-      position: fixed; inset: 0; z-index: 0;
-      pointer-events: none;
+    /* ─── CONTAINER ─── */
+    .container {
+      position: relative; z-index: 10;
+      text-align: center;
+      width: 90%; max-width: 600px;
     }
 
-    /* ─── BG ─── */
-    #bgGradient {
-      position: fixed; inset: -10%; z-index: 0;
-      background: linear-gradient(135deg, #2b0a16, #590d22, #800f2f, #ff4d6d);
-      background-size: 400% 400%;
-      animation: gradientShift 15s ease infinite;
-      opacity: 0.8;
-      transition: opacity 1s ease;
+    /* ─── STATE 1: THE HEART ─── */
+    #startScreen {
+      display: flex; flex-direction: column; align-items: center; gap: 30px;
+      transition: opacity 1s ease, transform 1s ease;
     }
-    #bgGradient.lit { opacity: 1; }
-
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    #startScreen.hidden {
+      opacity: 0; transform: scale(1.2); pointer-events: none; position: absolute;
     }
 
-    #vignette {
-      position: fixed; inset: 0; z-index: 1;
-      background: radial-gradient(ellipse at center, transparent 20%, rgba(43,10,22,0.85) 100%);
-      pointer-events: none;
+    .for-you {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(3rem, 10vw, 5rem);
+      color: #ff9a9e;
+      text-shadow: 0 0 20px rgba(255,154,158,0.5);
+      opacity: 0; animation: fadeIn 2s ease forwards 0.5s;
     }
 
-    .sparkle-overlay {
-      position: fixed; inset: 0; z-index: 2; pointer-events: none;
-      background: radial-gradient(ellipse at 50% 30%, rgba(255,133,162,0.15) 0%, transparent 60%);
-      animation: breathe 4s ease-in-out infinite alternate;
-    }
-    @keyframes breathe { from { opacity: 0.6; } to { opacity: 1; } }
-
-    /* ─── SCREENS ─── */
-    .screen {
-      position: fixed; inset: 0; z-index: 10;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.8s ease;
-    }
-    .screen.active { opacity: 1; pointer-events: all; }
-
-    /* ══════════════════════════════
-       SCREEN 0 – INTRO
-    ══════════════════════════════ */
-    #screen0 { gap: clamp(16px, 4vh, 32px); padding: 20px; }
-
-    .emblem-wrap {
-      position: relative;
-      width: clamp(120px, 30vw, 180px); height: clamp(120px, 30vw, 180px);
-      display: flex; align-items: center; justify-content: center;
+    .heart-btn {
       font-size: clamp(5rem, 15vw, 8rem);
-      filter: drop-shadow(0 0 30px rgba(255,77,109,0.8));
-      animation: heartbeat 2s ease-in-out infinite;
+      cursor: pointer;
+      filter: drop-shadow(0 0 30px rgba(255,107,129,0.8));
+      animation: heartbeat 1.5s infinite;
+      transition: transform 0.3s;
+      opacity: 0; animation: heartbeat 1.5s infinite, fadeIn 2s ease forwards 1.5s;
     }
+    .heart-btn:active { transform: scale(0.9); }
+
+    .tap-text {
+      font-size: 1rem; letter-spacing: 3px; color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      opacity: 0; animation: fadeIn 2s ease forwards 2.5s;
+    }
+
+    /* ─── STATE 2: THE MESSAGE ─── */
+    #messageScreen {
+      opacity: 0; pointer-events: none; transform: scale(0.9);
+      transition: opacity 1.5s ease 0.5s, transform 1.5s ease 0.5s;
+      display: flex; flex-direction: column; align-items: center; gap: 20px;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+      width: 90%; max-width: 600px;
+    }
+    #messageScreen.show {
+      opacity: 1; pointer-events: all; transform: translate(-50%, -50%) scale(1);
+    }
+
+    .ily-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(4rem, 12vw, 7rem);
+      color: #ff6b81;
+      text-shadow: 0 0 30px rgba(255,107,129,0.8);
+      line-height: 1; margin-bottom: 10px;
+    }
+
+    .message-body {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: clamp(20px, 5vw, 40px);
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      line-height: 1.8; font-weight: 300;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .reason {
+      margin-bottom: 15px;
+      opacity: 0; transform: translateY(15px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reason.show { opacity: 1; transform: translateY(0); }
+
+    /* Animations */
     @keyframes heartbeat {
       0%, 100% { transform: scale(1); }
       15% { transform: scale(1.15); }
       30% { transform: scale(1); }
       45% { transform: scale(1.15); }
     }
+    @keyframes fadeIn { to { opacity: 1; } }
 
-    .ring {
-      position: absolute; border-radius: 50%;
-      border: 2px solid rgba(255,133,162,0.4);
-      animation: ringPulse 3s linear infinite;
-    }
-    .ring:nth-child(1) { inset: -8px; }
-    .ring:nth-child(2) { inset: -24px; animation-delay: 1s; border-color: rgba(255,179,198,0.35); }
-    .ring:nth-child(3) { inset: -40px; animation-delay: 2s; border-color: rgba(255,77,109,0.2); }
-    @keyframes ringPulse {
-      0%   { transform: scale(1); opacity: 0.8; }
-      100% { transform: scale(1.2); opacity: 0; }
-    }
-
-    .game-title {
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(1.8rem, 5vw, 3rem);
-      color: var(--pink-light);
-      text-shadow: 0 0 16px rgba(255,77,109,0.7), 0 2px 4px rgba(0,0,0,0.5);
-      text-align: center;
-    }
-
-    .hero-text {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2.5rem, 9vw, 5.5rem);
-      font-style: italic; font-weight: 700; line-height: 1.1; text-align: center;
-      background: linear-gradient(135deg, #fff, var(--pink-light) 45%, var(--pink-dark));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      filter: drop-shadow(0 0 24px rgba(255,77,109,0.6));
-    }
-
-    .name-display {
-      font-family: 'Quicksand', sans-serif;
-      font-size: clamp(1.2rem, 4.5vw, 2.5rem);
-      font-weight: 700; letter-spacing: 4px; text-align: center; color: #fff;
-      text-shadow: 0 0 24px rgba(255,77,109,0.9), 0 2px 6px rgba(0,0,0,0.8);
-      animation: namePulse 3s ease-in-out infinite alternate;
-      text-transform: uppercase;
-    }
-    @keyframes namePulse {
-      from { text-shadow: 0 0 16px rgba(255,133,162,0.6), 0 2px 6px rgba(0,0,0,0.8); }
-      to   { text-shadow: 0 0 40px rgba(255,77,109,1), 0 0 60px rgba(255,179,198,0.4), 0 2px 6px rgba(0,0,0,0.8); }
-    }
-
-    .press-start {
-      font-family: 'Quicksand', sans-serif;
-      font-size: clamp(0.9rem, 3vw, 1.3rem);
-      font-weight: 700; letter-spacing: 3px; color: #fff;
-      text-transform: uppercase;
-      cursor: pointer;
-      border: 2px solid rgba(255,133,162,0.6);
-      padding: 14px 42px; border-radius: 40px;
-      background: rgba(255,77,109,0.15);
-      box-shadow: 0 0 20px rgba(255,77,109,0.4);
-      transition: all 0.3s ease;
-      -webkit-tap-highlight-color: transparent;
-      animation: floatBtn 3s ease-in-out infinite;
-    }
-    .press-start:hover, .press-start:active {
-      background: rgba(255,77,109,0.3); transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(255,77,109,0.6);
-    }
-    @keyframes floatBtn { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-
-    /* ══════════════════════════════
-       SCREEN 1 – SELECTION
-    ══════════════════════════════ */
-    #screen1 { gap: clamp(14px, 3vh, 24px); padding: 16px; }
-
-    .section-label {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: clamp(1rem, 3vw, 1.5rem);
-      color: var(--pink-light);
-      text-shadow: 0 0 10px rgba(255,77,109,0.6), 0 2px 3px rgba(0,0,0,0.8);
-      text-align: center;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: clamp(10px, 2vw, 16px);
-      max-width: 650px; width: 100%;
-    }
-
-    .hero-card {
-      position: relative;
-      background: linear-gradient(160deg, rgba(255,133,162,0.15), rgba(43,10,22,0.7));
-      border: 1px solid rgba(255,179,198,0.25);
-      border-radius: 12px;
-      padding: clamp(14px, 2.5vw, 20px) 8px;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 8px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      -webkit-tap-highlight-color: transparent;
-    }
-    .hero-card:active { transform: scale(0.95); }
-    .hero-card.selected {
-      border-color: var(--pink-main);
-      box-shadow: 0 0 30px rgba(255,77,109,0.5);
-      transform: translateY(-6px) scale(1.05);
-      background: linear-gradient(160deg, rgba(255,77,109,0.25), rgba(43,10,22,0.8));
-    }
-
-    .hero-icon { font-size: clamp(1.8rem, 6vw, 2.8rem); filter: drop-shadow(0 0 8px rgba(255,133,162,0.6)); }
-    .hero-name {
-      font-family: 'Quicksand', sans-serif;
-      font-size: clamp(0.6rem, 1.8vw, 0.85rem);
-      font-weight: 700; color: #fff; text-align: center;
-      text-transform: uppercase; letter-spacing: 1px;
-      text-shadow: 0 0 6px rgba(255,77,109,0.7), 0 1px 2px rgba(0,0,0,0.8);
-    }
-    .hero-role {
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-      color: var(--pink-light);
-      text-shadow: 0 0 5px rgba(255,133,162,0.7), 0 1px 2px rgba(0,0,0,0.8);
-    }
-
-    .select-btn {
-      font-family: 'Quicksand', sans-serif;
-      font-size: clamp(0.85rem, 2.5vw, 1.1rem);
-      font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      padding: 14px 40px; border: none; border-radius: 40px;
-      background: linear-gradient(135deg, var(--pink-dark), var(--pink-main), var(--pink-light));
-      color: #fff; cursor: pointer;
-      box-shadow: 0 0 24px rgba(255,77,109,0.4);
-      transition: all 0.3s;
-      opacity: 0.4; pointer-events: none;
-    }
-    .select-btn.enabled { opacity: 1; pointer-events: all; }
-    .select-btn.enabled:active { transform: scale(0.96); box-shadow: 0 0 40px rgba(255,77,109,0.7); }
-
-    /* ─── ROMANTIC POP-UP OVERLAY (Visual Novel Style) ─── */
-    .hero-popup-overlay {
-      position: fixed; inset: 0; z-index: 50;
-      background: rgba(43,10,22,0.85);
-      display: flex; align-items: flex-end; justify-content: flex-end;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.4s ease;
-      -webkit-backdrop-filter: blur(8px);
-      backdrop-filter: blur(8px);
-      padding: 0; overflow: hidden;
-    }
-    .hero-popup-overlay.show { opacity: 1; pointer-events: all; }
-
-    .popup-hero-image-wrap {
-      position: absolute; left: 5%; bottom: 10%;
-      width: 40%; height: 80%;
-      display: flex; align-items: center; justify-content: center;
-      transform: translateX(-100%) scale(0.9);
-      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-      z-index: 1;
-    }
-    .hero-popup-overlay.show .popup-hero-image-wrap { transform: translateX(0) scale(1); }
-    
-    .popup-hero-icon {
-      font-size: clamp(6rem, 20vw, 12rem);
-      filter: drop-shadow(0 0 40px rgba(255,133,162,0.8));
-    }
-
-    .hero-popup-content {
-      position: absolute; right: 5%; top: 50%;
-      transform: translateY(-50%) translateX(50px);
-      width: 48%; max-width: 600px;
-      background: linear-gradient(145deg, rgba(128,15,47,0.5), rgba(43,10,22,0.95));
-      border: 2px solid rgba(255,133,162,0.5);
-      border-radius: 20px;
-      padding: clamp(24px, 5vw, 40px);
-      text-align: left; opacity: 0;
-      transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s;
-      box-shadow: 0 0 60px rgba(255,77,109,0.3), 0 0 80px rgba(255,179,198,0.15);
-      z-index: 2;
-    }
-    .hero-popup-overlay.show .hero-popup-content { transform: translateY(-50%) translateX(0); opacity: 1; }
-
-    .popup-hero-name {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3rem); font-style: italic;
-      font-weight: 700; color: var(--pink-light);
-      text-shadow: 0 0 16px rgba(255,77,109,0.8), 0 2px 4px rgba(0,0,0,0.8);
-      margin-bottom: 4px; line-height: 1.1;
-    }
-
-    .popup-hero-role {
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(1.2rem, 3vw, 1.8rem);
-      color: #fff;
-      text-shadow: 0 0 8px rgba(255,133,162,0.8);
-    }
-
-    .popup-divider {
-      width: 80%; height: 2px; margin: 20px 0;
-      background: linear-gradient(90deg, var(--pink-main), transparent);
-    }
-
-    .popup-wish {
-      font-size: clamp(1rem, 2.5vw, 1.25rem);
-      color: #fff; line-height: 1.8; font-weight: 500;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-      margin-bottom: 24px;
-    }
-    .popup-wish strong { color: var(--pink-light); font-weight: 700; }
-
-    .popup-close {
-      font-family: 'Quicksand', sans-serif;
-      font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      padding: 12px 36px; border: 1px solid rgba(255,133,162,0.6);
-      border-radius: 30px; background: rgba(255,77,109,0.15);
-      color: var(--pink-light); cursor: pointer;
-      transition: all 0.3s; margin-top: 4px;
-    }
-    .popup-close:hover, .popup-close:active { transform: scale(0.96); background: rgba(255,77,109,0.3); }
-
-    /* ══════════════════════════════
-       SCREEN 2 – CINEMATIC REVEAL
-    ══════════════════════════════ */
-    #screen2 { gap: 0; overflow: hidden; }
-
-    .cinematic-bar {
-      position: absolute; left: 0; right: 0;
-      height: 80px; background: #1a060e; z-index: 5;
-      transition: height 1.2s cubic-bezier(0.77,0,0.18,1);
-    }
-    #topBar { top: 0; } #botBar { bottom: 0; }
-    #screen2.revealed #topBar, #screen2.revealed #botBar { height: 0; }
-
-    .bday-content {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: clamp(16px, 3vh, 24px); text-align: center;
-      padding: 16px; z-index: 3;
-      opacity: 0; transform: scale(0.95) translateY(24px);
-      transition: all 1.4s ease 0.8s;
-    }
-    #screen2.revealed .bday-content { opacity: 1; transform: scale(1) translateY(0); }
-
-    .hero-reveal-icon {
-      font-size: clamp(4rem, 12vw, 7rem);
-      animation: heroReveal 1s cubic-bezier(0.34,1.56,0.64,1) both;
-      filter: drop-shadow(0 0 30px rgba(255,77,109,0.6));
-    }
-    @keyframes heroReveal {
-      from { transform: scale(0) rotate(-15deg); opacity: 0; }
-      to   { transform: scale(1) rotate(0); opacity: 1; }
-    }
-
-    .bday-name {
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(3rem, 10vw, 6rem);
-      color: var(--pink-light);
-      text-shadow: 0 0 30px rgba(255,77,109,0.8), 0 2px 6px rgba(0,0,0,0.8);
-      line-height: 1;
-      animation: breathe 3s ease-in-out infinite alternate;
-    }
-
-    .bday-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.4rem, 4vw, 2.5rem); font-style: italic;
-      font-weight: 700; color: #fff;
-      text-shadow: 0 0 24px rgba(255,133,162,0.8), 0 2px 6px rgba(0,0,0,0.8);
-    }
-
-    .bday-divider {
-      width: clamp(200px, 60vw, 400px); height: 2px;
-      background: linear-gradient(90deg, transparent, var(--pink-main), var(--pink-light), transparent);
-    }
-
-    .bday-message {
-      font-size: clamp(1rem, 2.8vw, 1.4rem);
-      font-weight: 500; color: #fff; max-width: 600px;
-      line-height: 1.7; text-shadow: 0 1px 5px rgba(0,0,0,0.8);
-    }
-    .bday-message strong { color: var(--pink-light); font-weight: 700; font-size: 1.1em; }
-
-    .next-btn, .replay-btn {
-      font-family: 'Quicksand', sans-serif;
-      font-size: clamp(0.85rem, 2.2vw, 1rem);
-      font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      padding: 14px 40px;
-      border: 2px solid rgba(255,133,162,0.6); border-radius: 40px;
-      background: rgba(255,77,109,0.15); color: var(--text-main);
-      cursor: pointer; transition: all 0.3s;
-      box-shadow: 0 0 20px rgba(255,77,109,0.3);
-    }
-    .next-btn:active, .replay-btn:active { transform: scale(0.96); background: rgba(255,77,109,0.3); }
-
-    /* ══════════════════════════════
-       SCREEN 3 – TRIBUTE
-    ══════════════════════════════ */
-    #screen3 {
-      flex-direction: column; gap: 20px;
-      padding: 24px 16px; padding-bottom: 60px;
-      overflow-y: auto; overflow-x: hidden;
-      justify-content: flex-start; padding-top: 50px;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .tribute-title {
-      font-family: 'Playfair Display', serif; font-style: italic;
-      font-size: clamp(1.4rem, 4vw, 2.5rem); color: var(--pink-light);
-      text-shadow: 0 0 20px rgba(255,77,109,0.8), 0 2px 5px rgba(0,0,0,0.8);
-      text-align: center;
-    }
-
-    .tribute-name {
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(2rem, 6vw, 3.5rem); color: #fff;
-      text-shadow: 0 0 20px rgba(255,133,162,0.9), 0 2px 5px rgba(0,0,0,0.8);
-      text-align: center; line-height: 1; margin-bottom: 10px;
-    }
-
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: clamp(10px, 2vw, 16px);
-      max-width: 650px; width: 100%;
-    }
-    .stat-card {
-      background: linear-gradient(145deg, rgba(255,133,162,0.15), rgba(43,10,22,0.7));
-      border: 1px solid rgba(255,179,198,0.2);
-      border-radius: 12px;
-      padding: clamp(14px, 2.5vw, 20px) 8px;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 6px; position: relative;
-      transition: transform 0.3s ease;
-    }
-    .stat-card:hover { transform: translateY(-3px); border-color: var(--pink-main); box-shadow: 0 0 20px rgba(255,77,109,0.3); }
-    .stat-icon { font-size: clamp(1.5rem, 4vw, 2.2rem); }
-    .stat-value {
-      font-family: 'Quicksand', sans-serif;
-      font-size: clamp(1.1rem, 3vw, 1.8rem);
-      font-weight: 700; color: #fff;
-      text-shadow: 0 0 12px rgba(255,77,109,0.8), 0 1px 3px rgba(0,0,0,0.8);
-    }
-    .stat-label {
-      font-size: clamp(0.55rem, 1.8vw, 0.75rem);
-      letter-spacing: 2px; color: var(--pink-light); text-transform: uppercase;
-      text-shadow: 0 0 6px rgba(255,133,162,0.7);
-    }
-
-    .message-box {
-      max-width: 650px; width: 100%;
-      background: linear-gradient(135deg, rgba(128,15,47,0.3), rgba(43,10,22,0.85));
-      border: 1px solid rgba(255,133,162,0.3);
-      border-radius: 16px;
-      padding: clamp(24px, 5vw, 36px);
-      position: relative; margin-top: 10px;
-    }
-    .message-box::before {
-      content: '❝'; position: absolute; top: -15px; left: 20px;
-      font-family: 'Playfair Display', serif;
-      font-size: 3.5rem; color: var(--pink-main); opacity: 0.4; line-height: 1;
-    }
-    .message-text {
-      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
-      line-height: 1.9; color: #fff; font-weight: 500;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8); text-align: center;
-    }
-    .message-text strong {
-      color: var(--pink-light); font-weight: 700;
-      text-shadow: 0 0 10px rgba(255,77,109,0.6);
-    }
-    .message-sig {
-      margin-top: 20px; font-family: 'Great Vibes', cursive;
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      color: var(--pink-light); text-align: right;
-      text-shadow: 0 0 15px rgba(255,133,162,0.8);
-    }
-
-    .celebrate-btn {
-      font-family: 'Quicksand', sans-serif;
-      font-size: clamp(0.9rem, 2.8vw, 1.15rem);
-      font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      padding: 16px 48px; border: none; border-radius: 40px;
-      background: linear-gradient(135deg, var(--pink-dark), var(--pink-main), var(--pink-light));
-      color: #fff; cursor: pointer;
-      box-shadow: 0 0 30px rgba(255,77,109,0.5);
-      transition: transform 0.2s; margin-top: 20px;
-    }
-    .celebrate-btn:active { transform: scale(0.96); box-shadow: 0 0 40px rgba(255,77,109,0.8); }
-
-    /* ─── BLESSINGS ─── */
-    .blessings-header {
-      font-family: 'Playfair Display', serif; font-style: italic;
-      font-size: clamp(1.1rem, 3vw, 1.8rem); color: var(--pink-light);
-      text-shadow: 0 0 20px rgba(255,77,109,0.8), 0 2px 5px rgba(0,0,0,0.8);
-      text-align: center; margin-top: 10px;
-    }
-
-    .blessings-divider {
-      width: clamp(180px, 50vw, 300px); height: 2px;
-      background: linear-gradient(90deg, transparent, var(--pink-main), var(--pink-light), var(--pink-main), transparent);
-    }
-
-    .blessings-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr);
-      gap: clamp(10px, 2vw, 16px); max-width: 650px; width: 100%;
-    }
-
-    .blessing-card {
-      background: linear-gradient(155deg, rgba(255,133,162,0.1), rgba(43,10,22,0.75));
-      border: 1px solid rgba(255,179,198,0.15); border-radius: 12px;
-      padding: clamp(16px, 3vw, 24px) clamp(12px, 2.5vw, 18px);
-      display: flex; gap: 12px; align-items: flex-start;
-      opacity: 0; transform: translateY(20px);
-      transition: all 0.3s ease;
-    }
-    .blessing-card.visible { animation: blessingIn 0.6s cubic-bezier(0.2,0.8,0.2,1) forwards; }
-    .blessing-card:hover { transform: translateY(-4px); border-color: var(--pink-main); box-shadow: 0 0 25px rgba(255,77,109,0.25); }
-    @keyframes blessingIn { to { opacity: 1; transform: translateY(0); } }
-
-    .blessing-icon { font-size: clamp(1.6rem, 5vw, 2.2rem); flex-shrink: 0; line-height: 1; }
-    .blessing-body { display: flex; flex-direction: column; gap: 4px; }
-    .blessing-title {
-      font-family: 'Quicksand', sans-serif;
-      font-size: clamp(0.75rem, 2.2vw, 0.95rem);
-      font-weight: 700; color: var(--pink-light);
-      letter-spacing: 1.5px; text-transform: uppercase;
-      text-shadow: 0 0 8px rgba(255,133,162,0.6);
-    }
-    .blessing-text {
-      font-size: clamp(0.8rem, 2.2vw, 0.95rem);
-      color: #fff; line-height: 1.6; font-weight: 500;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-    }
-
-    /* ══════════════════════════════
-       SCREEN 4 – CELEBRATION
-    ══════════════════════════════ */
-    #screen4 { gap: clamp(16px, 4vh, 28px); padding: 20px; }
-
-    .victory-text {
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(3rem, 10vw, 6rem);
-      font-weight: 400; text-align: center; line-height: 1.2;
-      background: linear-gradient(135deg, #fff, var(--pink-light), var(--pink-dark), #fff);
-      background-size: 300% 300%;
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      animation: rainbowShift 4s ease-in-out infinite;
-      filter: drop-shadow(0 0 20px rgba(255,77,109,0.5));
-    }
-
-    .firework-emojis {
-      font-size: clamp(2rem, 6vw, 4rem);
-      animation: popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
-      letter-spacing: 12px;
-    }
-    @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-    .final-message {
-      font-family: 'Playfair Display', serif; font-style: italic;
-      font-size: clamp(1.2rem, 3.5vw, 1.8rem);
-      color: #fff; text-align: center; max-width: 550px;
-      line-height: 1.6; font-weight: 600;
-      text-shadow: 0 0 16px rgba(255,77,109,0.8), 0 2px 4px rgba(0,0,0,0.8);
-    }
-
-    /* ─── CONFETTI (SAKURA PETALS) ─── */
-    .confetti-piece {
-      position: fixed; top: -20px;
-      background: var(--pink-light);
-      border-radius: 50% 0 50% 50%;
-      box-shadow: 0 0 10px rgba(255,133,162,0.6);
-      animation: sakuraFall linear forwards;
-      z-index: 20; pointer-events: none;
-    }
-    @keyframes sakuraFall {
-      0%   { transform: translateY(0) rotate(0deg) scale(0.5); opacity: 0; }
-      10%  { opacity: 1; transform: translateY(10vh) rotate(45deg) scale(1); }
-      90%  { opacity: 1; }
-      100% { transform: translateY(110vh) rotate(720deg) scale(0.8); opacity: 0; }
-    }
-
-    /* ─── HUD ─── */
-    .hud {
-      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
-      z-index: 15; display: flex; align-items: center; gap: 14px;
-      opacity: 0; transition: opacity 0.8s ease 0.4s;
-    }
-    .hud.show { opacity: 1; }
-    .hud-gem {
-      font-size: clamp(0.8rem, 2.5vw, 1.2rem);
-      filter: drop-shadow(0 0 10px rgba(255,133,162,0.8));
-      animation: breathe 2s ease-in-out infinite alternate;
-    }
-    .hud-title {
-      font-family: 'Quicksand', sans-serif; font-weight: 700;
-      font-size: clamp(0.55rem, 2vw, 0.8rem);
-      letter-spacing: 4px; color: var(--pink-light); text-transform: uppercase;
-      text-shadow: 0 0 8px rgba(255,77,109,0.5);
-    }
-
-    /* ─── MOBILE SPECIFIC ─── */
-    @media (max-width: 768px) {
-      .hero-grid { grid-template-columns: repeat(2, 1fr); }
-      .stat-grid { grid-template-columns: repeat(2, 1fr); }
-      .blessings-grid { grid-template-columns: 1fr; }
-      
-      .hero-popup-overlay { flex-direction: column; justify-content: flex-end; align-items: center; }
-      .popup-hero-image-wrap { 
-        width: 100%; height: 40vh; 
-        transform: translateY(100%) scale(0.9); 
-        left: auto; bottom: auto; position: relative;
-      }
-      .hero-popup-overlay.show .popup-hero-image-wrap { transform: translateY(0) scale(1); }
-      .hero-popup-content { 
-        position: relative; top: auto; right: auto; transform: translateY(50px);
-        width: 95%; max-width: none; text-align: center; margin-bottom: 24px; padding: 24px 20px;
-      }
-      .hero-popup-overlay.show .hero-popup-content { transform: translateY(0); }
-      .popup-divider { width: 100%; background: linear-gradient(90deg, transparent, var(--pink-main), transparent); }
-    }
   </style>
 </head>
 <body>
 
-<div id="bgGradient"></div>
-<div id="vignette"></div>
-<div class="sparkle-overlay"></div>
-<canvas id="particleCanvas"></canvas>
+<canvas id="starsCanvas"></canvas>
 
-<div class="hud" id="hud">
-  <div class="hud-gem">🌸</div>
-  <div class="hud-title">A Tale of Romance</div>
-  <div class="hud-gem">🌸</div>
-</div>
-
-<!-- ANIME TROPE POP-UP -->
-<div class="hero-popup-overlay" id="heroPopup">
-  <div class="popup-hero-image-wrap" id="popupImageWrap">
-    <div class="popup-hero-icon" id="popupIcon">💖</div>
-  </div>
-  <div class="hero-popup-content">
-    <div class="popup-hero-name" id="popupName">The Trope</div>
-    <div class="popup-hero-role" id="popupRole">Mood</div>
-    <div class="popup-divider"></div>
-    <div class="popup-wish" id="popupWish">...</div>
-    <button class="popup-close" id="popupClose">Accept This Love 💕</button>
-  </div>
-</div>
-
-<!-- SCREEN 0: INTRO -->
-<div class="screen active" id="screen0">
-  <div class="emblem-wrap">
-    <div class="ring"></div>
-    <div class="ring"></div>
-    <div class="ring"></div>
-    💖
-  </div>
-  <div class="game-title">My Dearest Love</div>
-  <div class="hero-text">Happy<br/>Birthday</div>
-  <div class="name-display">🌸 To My Beautiful Girlfriend 🌸</div>
-  <button class="press-start" id="startBtn">Open My Heart 💌</button>
-</div>
-
-<!-- SCREEN 1: SELECT MOOD -->
-<div class="screen" id="screen1">
-  <div class="section-label">"If our love story was an anime, which trope would we be?"</div>
-  <div class="hero-grid" id="heroGrid"></div>
-  <button class="select-btn" id="selectBtn">Lock In Our Story 💞</button>
-</div>
-
-<!-- SCREEN 2: CINEMATIC REVEAL -->
-<div class="screen" id="screen2">
-  <div class="cinematic-bar" id="topBar"></div>
-  <div class="cinematic-bar" id="botBar"></div>
-  <div class="bday-content">
-    <div id="selectedHeroIcon" class="hero-reveal-icon">💖</div>
-    <div class="bday-name">My Beautiful Girl</div>
-    <div class="bday-title">Another wonderful year with you ✨</div>
-    <div class="bday-divider"></div>
-    <p class="bday-message">
-      Every moment with you feels like a beautifully animated movie.<br/>
-      You are the <strong>main character</strong> of my heart.
-    </p>
-    <button class="next-btn" id="toMsgBtn">Read My Confession 💌</button>
-  </div>
-</div>
-
-<!-- SCREEN 3: ROMANTIC TRIBUTE -->
-<div class="screen" id="screen3">
-  <div class="tribute-title">A Heartfelt Confession To</div>
-  <div class="tribute-name">The Love of My Life</div>
-
-  <div class="stat-grid">
-    <div class="stat-card"><div class="stat-icon">💖</div><div class="stat-value">MAX</div><div class="stat-label">Affection Level</div></div>
-    <div class="stat-card"><div class="stat-icon">🧸</div><div class="stat-value">SSS</div><div class="stat-label">Cuddle Power</div></div>
-    <div class="stat-card"><div class="stat-icon">✨</div><div class="stat-value">100%</div><div class="stat-label">Radiance</div></div>
-    <div class="stat-card"><div class="stat-icon">🥺</div><div class="stat-value">∞</div><div class="stat-label">Cutoseness</div></div>
-    <div class="stat-card"><div class="stat-icon">💍</div><div class="stat-value">100%</div><div class="stat-label">Loyalty</div></div>
-    <div class="stat-card"><div class="stat-icon">👑</div><div class="stat-value">Waifu</div><div class="stat-label">Status</div></div>
+<div class="container">
+  
+  <!-- STATE 1 -->
+  <div id="startScreen">
+    <div class="for-you">Just for you...</div>
+    <div class="heart-btn" id="openBtn">❤️</div>
+    <div class="tap-text">Tap the heart</div>
   </div>
 
-  <div class="message-box">
-    <p class="message-text">
-      My love, from the moment our paths crossed, my world became infinitely brighter and more colorful. You are the sweet melody to my everyday life, the beautiful sunset to my evenings, and the absolute best thing that has ever happened to me.
-      <br/><br/>
-      On your special day, I want to remind you just how deeply, madly, and unconditionally <strong>I am in love with you</strong>. Your smile melts my heart every single time, and your happiness is my greatest goal in life.
-      <br/><br/>
-      Thank you for being my partner, my best friend, and my soulmate. I promise to always hold your hand, to cherish every moment we share, and to love you more with each passing day. 
-      <br/><br/>
-      Happy Birthday, my gorgeous girl. Here's to a lifetime of beautiful moments together. 🌸💖
-    </p>
-    <div class="message-sig">— Yours Forever & Always 💕</div>
+  <!-- STATE 2 -->
+  <div id="messageScreen">
+    <div class="ily-title">I Love You</div>
+    <div class="message-body">
+      <div class="reason">You are the best thing that ever happened to me.</div>
+      <div class="reason">Your smile makes my whole world brighter.</div>
+      <div class="reason">Every moment with you feels like magic.</div>
+      <div class="reason">I just wanted to remind you how special you are.</div>
+      <div class="reason" style="margin-top: 25px; font-family: 'Great Vibes', cursive; font-size: 2rem; color: #ff9a9e;">Forever & Always 💕</div>
+    </div>
   </div>
 
-  <div class="blessings-divider"></div>
-  <div class="blessings-header">✨ My Promises To You ✨</div>
-
-  <div class="blessings-grid" id="blessingsGrid">
-    <div class="blessing-card"><div class="blessing-icon">☂️</div><div class="blessing-body"><div class="blessing-title">Protection</div><div class="blessing-text">I will always be your umbrella on rainy days and your safe harbor when you need comfort.</div></div></div>
-    <div class="blessing-card"><div class="blessing-icon">🥰</div><div class="blessing-body"><div class="blessing-title">Adoration</div><div class="blessing-text">I promise to look at you everyday like it's the very first time I realized I loved you.</div></div></div>
-    <div class="blessing-card"><div class="blessing-icon">👂</div><div class="blessing-body"><div class="blessing-title">Patience</div><div class="blessing-text">I will always listen to your worries, your dreams, and all your random daily stories.</div></div></div>
-    <div class="blessing-card"><div class="blessing-icon">🍜</div><div class="blessing-body"><div class="blessing-title">Nourishment</div><div class="blessing-text">I promise to always share my food, take you on cute dates, and feed you when you are hungry/hangry.</div></div></div>
-    <div class="blessing-card"><div class="blessing-icon">✈️</div><div class="blessing-body"><div class="blessing-title">Adventure</div><div class="blessing-text">We will explore the world together, create unforgettable memories, and take a million silly photos.</div></div></div>
-    <div class="blessing-card"><div class="blessing-icon">🤲</div><div class="blessing-body"><div class="blessing-title">Support</div><div class="blessing-text">I will be your biggest cheerleader in everything you do. Your dreams are my dreams.</div></div></div>
-    <div class="blessing-card"><div class="blessing-icon">😂</div><div class="blessing-body"><div class="blessing-title">Joy</div><div class="blessing-text">I promise to do everything I can to make you laugh and keep that beautiful smile on your face.</div></div></div>
-    <div class="blessing-card"><div class="blessing-icon">💞</div><div class="blessing-body"><div class="blessing-title">Eternity</div><div class="blessing-text">I will choose you, today, tomorrow, and every single day for the rest of my life.</div></div></div>
-  </div>
-
-  <button class="celebrate-btn" id="celebrateBtn">Shower Me With Love 🌸</button>
-</div>
-
-<!-- SCREEN 4: CELEBRATION -->
-<div class="screen" id="screen4">
-  <div class="firework-emojis" style="animation-delay:0s">🌸💖✨</div>
-  <div class="victory-text">Forever<br/>Yours</div>
-  <div class="firework-emojis" style="animation-delay:0.3s">🎀💕🥂</div>
-  <div class="final-message">
-    Happy Birthday to the most beautiful girl in the world! 🎉<br/>
-    I love you endlessly.<br/>
-    Now, let's go celebrate! 🎂💖
-  </div>
-  <div class="firework-emojis" style="animation-delay:0.6s">🥰💍💌</div>
-  <button class="replay-btn" id="replayBtn">Relive The Magic ↺</button>
 </div>
 
 <script>
-const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.innerWidth < 768;
-
-// ── ANIME ROMANCE TROPES ──────────────────────────────
-const tropes = [
-  { name: "Childhood Friends", role: "The Classic", icon: "🧸", 
-    wish: "Like a sweet slice-of-life anime, we grew up together and my feelings bloomed. <strong>You've always been the one.</strong> 🌸" },
-  { name: "The Tsundere", role: "Enemies to Lovers", icon: "😠", 
-    wish: "I-it's not like I made this whole website just for you or anything! B-baka! ...But seriously, <strong>I love you so much.</strong> 💖" },
-  { name: "The Senpai", role: "School Romance", icon: "📚", 
-    wish: "I finally noticed you, Senpai! Just kidding, you're the only one I ever look at. <strong>My eyes are always on you.</strong> ✨" },
-  { name: "Magical Girl", role: "Destined Love", icon: "🪄", 
-    wish: "By the power of love, you transformed my world! You are the magical girl who <strong>saved my heart.</strong> 🌙" },
-  { name: "Royal Court", role: "Prince & Princess", icon: "👑", 
-    wish: "A romance written in the stars. You are the beautiful princess to my kingdom, and <strong>I am yours forever.</strong> 🏰" },
-  { name: "The Red String", role: "Soulmates", icon: "🧶", 
-    wish: "The red string of fate led me straight to you. No matter where we are, <strong>we are bound together by love.</strong> ❤️" },
-  { name: "Transfer Student", role: "Love at First Sight", icon: "🌸", 
-    wish: "The moment you walked into my life, time stopped and sakura petals fell. <strong>It was love at first sight.</strong> 🎒" },
-  { name: "The Kuudere", role: "Quiet & Sweet", icon: "❄️", 
-    wish: "I might not always be the loudest, but my heart beats a million times a second when I'm with you. <strong>You melt my ice.</strong> ☕" },
-];
-
-// ── SAKURA PARTICLE SYSTEM ─────────────────────────────────────
-const canvas = document.getElementById('particleCanvas');
+// ── SIMPLE FLOATING HEARTS & STARS CANVAS ──
+const canvas = document.getElementById('starsCanvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
 let W, H;
-const PARTICLE_COUNT = isMobile ? 30 : 60;
 
-function resizeCanvas() {
+function resize() {
   W = canvas.width = window.innerWidth;
   H = canvas.height = window.innerHeight;
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+window.addEventListener('resize', resize);
+resize();
 
-class Sakura {
-  constructor() { this.reset(); }
-  reset() {
+class Particle {
+  constructor() {
     this.x = Math.random() * W;
-    this.y = Math.random() * H - H;
-    this.size = Math.random() * 8 + 4;
-    this.speedY = Math.random() * 1 + 0.5;
-    this.speedX = Math.random() * 2 - 1;
-    this.angle = Math.random() * 360;
-    this.spin = Math.random() * 0.2 - 0.1;
-    this.opacity = Math.random() * 0.5 + 0.3;
+    this.y = Math.random() * H;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedY = Math.random() * 0.5 + 0.2;
+    this.opacity = Math.random() * 0.5 + 0.2;
+    this.isHeart = Math.random() > 0.8;
   }
   update() {
-    this.y += this.speedY;
-    this.x += this.speedX + Math.sin(this.y / 50) * 0.5; // fluttering effect
-    this.angle += this.spin;
-    if (this.y > H + 20) this.reset();
+    this.y -= this.speedY;
+    if (this.y < -10) {
+      this.y = H + 10;
+      this.x = Math.random() * W;
+    }
   }
   draw() {
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.angle);
     ctx.globalAlpha = this.opacity;
-    ctx.fillStyle = '#ffb3c6'; // light pink petal
-    ctx.beginPath();
-    // draw a simple petal shape
-    ctx.moveTo(0, 0);
-    ctx.quadraticCurveTo(this.size, -this.size, 0, -this.size * 2);
-    ctx.quadraticCurveTo(-this.size, -this.size, 0, 0);
-    ctx.fill();
-    ctx.restore();
-  }
-}
-
-for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Sakura());
-
-function animParticles() {
-  ctx.clearRect(0, 0, W, H);
-  for (let i = 0; i < particles.length; i++) {
-    particles[i].update();
-    particles[i].draw();
-  }
-  requestAnimationFrame(animParticles);
-}
-animParticles();
-
-// ── SCREEN MANAGEMENT ────────────────────────────────────────────
-let currentScreen = 0;
-function goTo(n) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen' + n).classList.add('active');
-  currentScreen = n;
-  if (n === 3) {
-    document.getElementById('screen3').scrollTop = 0;
-    // Animate blessings
-    setTimeout(() => {
-      document.querySelectorAll('.blessing-card').forEach((card, i) => {
-        setTimeout(() => card.classList.add('visible'), i * 150);
-      });
-    }, 400);
-  }
-}
-
-// ── POPUP MANAGEMENT ─────────────────────────────────────────────
-const popupOverlay = document.getElementById('heroPopup');
-const popupIcon = document.getElementById('popupIcon');
-const popupName = document.getElementById('popupName');
-const popupRole = document.getElementById('popupRole');
-const popupWish = document.getElementById('popupWish');
-
-function showPopup(trope) {
-  popupIcon.textContent = trope.icon;
-  popupName.textContent = trope.name;
-  popupRole.textContent = trope.role;
-  popupWish.innerHTML = trope.wish;
-  popupOverlay.classList.add('show');
-}
-
-document.getElementById('popupClose').addEventListener('click', () => {
-  popupOverlay.classList.remove('show');
-});
-popupOverlay.addEventListener('click', (e) => {
-  if (e.target === popupOverlay) popupOverlay.classList.remove('show');
-});
-
-// ── BUILD SELECTION GRID ─────────────────────────────────────────
-let selectedTrope = null;
-const grid = document.getElementById('heroGrid');
-const selectBtn = document.getElementById('selectBtn');
-
-tropes.forEach((t) => {
-  const card = document.createElement('div');
-  card.className = 'hero-card';
-  card.innerHTML = `
-    <div class="hero-icon">${t.icon}</div>
-    <div class="hero-name">${t.name}</div>
-    <div class="hero-role">${t.role}</div>
-  `;
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.hero-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    selectedTrope = t;
-    selectBtn.classList.add('enabled');
-    showPopup(t);
-  });
-  grid.appendChild(card);
-});
-
-// ── BUTTON ACTIONS ──────────────────────────────────────────────
-document.getElementById('startBtn').addEventListener('click', () => {
-  document.getElementById('bgGradient').classList.add('lit');
-  document.getElementById('hud').classList.add('show');
-  goTo(1);
-});
-
-selectBtn.addEventListener('click', () => {
-  if (!selectedTrope) return;
-  goTo(2);
-  document.getElementById('selectedHeroIcon').textContent = selectedTrope.icon;
-  setTimeout(() => {
-    document.getElementById('screen2').classList.add('revealed');
-  }, 300);
-});
-
-document.getElementById('toMsgBtn').addEventListener('click', () => goTo(3));
-
-document.getElementById('celebrateBtn').addEventListener('click', () => {
-  goTo(4);
-  const count = isMobile ? 30 : 60;
-  launchConfetti(0, count);
-  launchConfetti(400, count);
-  if (!isMobile) launchConfetti(800, count);
-});
-
-document.getElementById('replayBtn').addEventListener('click', () => {
-  selectedTrope = null;
-  document.querySelectorAll('.hero-card').forEach(c => c.classList.remove('selected'));
-  document.querySelectorAll('.blessing-card').forEach(c => c.classList.remove('visible'));
-  selectBtn.classList.remove('enabled');
-  document.getElementById('screen2').classList.remove('revealed');
-  document.getElementById('bgGradient').classList.remove('lit');
-  document.getElementById('hud').classList.remove('show');
-  goTo(0);
-});
-
-// ── CONFETTI (SAKURA SHOWER) ─────────────────────────────────────
-function launchConfetti(delay = 0, count = 50) {
-  setTimeout(() => {
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement('div');
-      p.className = 'confetti-piece';
-      p.style.left = Math.random() * 100 + 'vw';
-      
-      const size = Math.random() * 10 + 6;
-      p.style.width = size + 'px';
-      p.style.height = size + 'px';
-      
-      const dur = Math.random() * 3 + 3;
-      p.style.animationDuration = dur + 's';
-      p.style.animationDelay = Math.random() * 0.5 + 's';
-      document.body.appendChild(p);
-      setTimeout(() => p.remove(), (dur + 1) * 1000);
+    if (this.isHeart) {
+      ctx.fillStyle = '#ff6b81';
+      ctx.font = '10px Arial';
+      ctx.fillText('❤', this.x, this.y);
+    } else {
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
     }
-  }, delay);
+  }
 }
+
+for (let i = 0; i < 50; i++) particles.push(new Particle());
+
+function animate() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+// ── INTERACTION LOGIC ──
+const startScreen = document.getElementById('startScreen');
+const messageScreen = document.getElementById('messageScreen');
+const reasons = document.querySelectorAll('.reason');
+
+document.getElementById('openBtn').addEventListener('click', () => {
+  // Hide state 1
+  startScreen.classList.add('hidden');
+  
+  // Show state 2 after a small delay
+  setTimeout(() => {
+    messageScreen.classList.add('show');
+    
+    // Cascade animate the reasons
+    reasons.forEach((r, index) => {
+      setTimeout(() => {
+        r.classList.add('show');
+      }, 800 + (index * 800)); // 800ms delay between each line
+    });
+    
+  }, 800);
+});
 </script>
 </body>
 </html>
